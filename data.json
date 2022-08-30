@@ -1,0 +1,198 @@
+{
+  "version": 150,
+  "id": "",
+  "digitoVerificadorDE": 0,
+  "fechaFirmaDigital": "",
+  "sistemaFacturacion": 1,
+  "operacionDE": {
+    "tipoEmision": "1",
+    "desTipoEmision": "Normal",
+    "codigoSeguridad": 0
+  },
+  "timbrado": {
+    "tipoDE": 1,
+    "desTipoDE": "Factura electrónica",
+    "numeroTimbrado": 12345678,
+    "establecimiento": "001",
+    "puntoExpedicion": "001",
+    "numeroDocumento": "1234567",
+    "fechaInicioVigenciaTimbrado": "2022-06-07"
+  },
+  "camposGeneralesDE": {
+    "fechaEmisionDE": "2022-08-09T15:03:21",
+    "operacionComercial": {
+      "tipoTransaccion": 1,
+      "desTransaccion": "Venta de mercadería",
+      "tipoImpuesto": 1,
+      "desTipoImpuesto": "IVA",
+      "moneda": "PYG",
+      "desMoneda": "Guarani"
+    },
+    "emisor": {
+      "ruc": "80009057",
+      "digitoVerificador": 0,
+      "tipoContribuyente": 2,
+      "nombre":
+        "DE generado en ambiente de prueba - sin valor comercial ni fiscal",
+      "direccion": "Avda. Aviadores del Chaco esquina Prof. Delia González",
+      "numeroCasa": 0,
+      "departamento": 1,
+      "desDepartamento": "CAPITAL",
+      "distrito": 1,
+      "desDistrito": "ASUNCION (DISTRITO)",
+      "ciudad": 1,
+      "desCiudad": "ASUNCION (DISTRITO)",
+      "telefono": "021611780",
+      "email": "info@delsol.com",
+      "actividadEconomica": [
+        {
+          "actividad": "46510",
+          "desActividad":
+            "COMERCIO AL POR MAYOR DE EQUIPOS INFORMÁTICOS Y SOFTWARE"
+        }
+      ]
+    },
+    "receptor": {
+      "naturaleza": 1,
+      "tipoOperacion": 1,
+      "pais": "PRY",
+      "desPais": "Paraguay",
+      "tipoContribuyente": 1,
+      "ruc": "89012345",
+      "digitoVerificador": 0,
+      "nombre": "RECEPTOR DEL DOCUMENTO",
+      "direccion": "CALLE 1 ENTRE CALLE 2 Y CALLE 3",
+      "numeroCasa": 123,
+      "departamento": 1,
+      "desDepartamento": "CAPITAL",
+      "distrito": 1,
+      "desDistrito": "ASUNCION (DISTRITO)",
+      "ciudad": 1,
+      "desCiudad": "ASUNCION (DISTRITO)",
+      "telefono": "021200726",
+      "celular": "0984123321",
+      "email": "lutormig@gmail.com"
+    }
+  },
+  "documentoElectronico": {
+    "facturaElectronica": {
+      "indicadorPresencia": "1",
+      "desIndicadorPresencia": "Operación presencial"
+    },
+    "condicionOperacion": {
+      "condicion": 2,
+      "desCondicion": "Crédito",
+      "pagoCredito": {
+        "condicion": 1,
+        "desCondicion": "Plazo",
+        "plazo": "10 días",
+        "cantidadCuotas": 1,
+        "monto": 200000,
+        "cuotas": [
+          {
+            "moneda": "PYG",
+            "desMoneda": "Guarani",
+            "monto": 200000,
+            "vencimiento": "2022-08-19"
+          }
+        ]
+      }
+    },
+    "items": [
+      {
+        "codigoInterno": "6",
+        "desProductoServicio": "Arrendamiento de espacio valor porcentual",
+        "unidadMedida": 77,
+        "desUnidadMedida": "Unidad",
+        "cantidad": 1,
+        "valorItem": {
+          "precioUnitario": 110000,
+          "totalBruto": 110000,
+          "valorRestaItem": {
+            "totalOperacion": 110000
+          }
+        },
+        "iva": {
+          "afectacionTributariaIva": 1,
+          "desAfectacionTributariaIva": "Gravado IVA",
+          "proporcionGravadaIva": 100,
+          "tasaIva": 10,
+          "baseGravadaIva": 100000,
+          "liquidacionIva": 10000
+        }
+      },
+      {
+        "codigoInterno": "5",
+        "desProductoServicio": "Fondo de promoción",
+        "unidadMedida": 77,
+        "desUnidadMedida": "Unidad",
+        "cantidad": 1,
+        "valorItem": {
+          "precioUnitario": 80000,
+          "totalBruto": 80000,
+          "valorRestaItem": {
+            "totalOperacion": 80000
+          }
+        },
+        "iva": {
+          "afectacionTributariaIva": 1,
+          "desAfectacionTributariaIva": "Gravado IVA",
+          "proporcionGravadaIva": 100,
+          "tasaIva": 10,
+          "baseGravadaIva": 72727,
+          "liquidacionIva": 7273
+        }
+      },
+      {
+        "codigoInterno": "3",
+        "desProductoServicio": "Presencia en página web",
+        "unidadMedida": 77,
+        "desUnidadMedida": "Unidad",
+        "cantidad": 1,
+        "valorItem": {
+          "precioUnitario": 10000,
+          "totalBruto": 10000,
+          "valorRestaItem": {
+            "totalOperacion": 10000
+          }
+        },
+        "iva": {
+          "afectacionTributariaIva": 1,
+          "desAfectacionTributariaIva": "Gravado IVA",
+          "proporcionGravadaIva": 100,
+          "tasaIva": 10,
+          "baseGravadaIva": 9091,
+          "liquidacionIva": 909
+        }
+      }
+    ]
+  },
+  "subtotalesTotales": {
+    "subtotalExenta": 0,
+    "subtotalExonerada": 0,
+    "subtotalIvaIncluido5": 0,
+    "subtotalIvaIncluido10": 200000,
+    "totalBruto": 200000,
+    "totalDescuentoParticular": 0,
+    "totalDescuentoGlobal": 0,
+    "totalAnticipo": 0,
+    "totalAnticipoGlobal": 0,
+    "porcentajeDescuentoTotal": 0,
+    "descuentoTotal": 0,
+    "anticipoTotal": 0,
+    "redondeo": 0,
+    "comision": 0,
+    "totalGeneral": 200000,
+    "iva5": 0,
+    "iva10": 18182,
+    "liquidacionTotalIva5Redondeo": 0,
+    "liquidacionTotalIva10Redondeo": 0,
+    "ivaComision": 0,
+    "totalIva": 18182,
+    "totalBaseGravada5": 0,
+    "totalBaseGravada10": 181818,
+    "totalBaseGravadaIva": 181818,
+    "dTotalGs":200000
+  },
+  "informacionAdicional":"Correspondiente al consumo de energia electrica de los carteles ubicados en los accesos Norte y Oeste de Abril a Agosto 2022."
+}
