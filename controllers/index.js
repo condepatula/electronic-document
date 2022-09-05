@@ -1,4 +1,5 @@
 import { generateElectronicDocument } from "../services.js";
+import { getTiposTransacciones } from "../database/index.js";
 
 export const generateDe = async (req, res) => {
   let data = req.body;
@@ -20,5 +21,23 @@ export const generateDe = async (req, res) => {
     });
   }
 };
+export const _getTiposTransacciones = async (_, res) => {
+  try {
+    let data = await getTiposTransacciones();
+    return res.status(200).send({
+      success: true,
+      message: "",
+      data,
+      errors: [],
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send({
+      success: false,
+      message: "",
+      error: err,
+    });
+  }
+};
 
-export default { generateDe };
+export default { generateDe, _getTiposTransacciones };

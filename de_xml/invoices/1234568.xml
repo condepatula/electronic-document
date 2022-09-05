@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <rDE xmlns="http://ekuatia.set.gov.py/sifen/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://ekuatia.set.gov.py/sifen/xsd/siRecepDE_v150.xsd">
   <dVerFor>150</dVerFor>
-  <DE Id="01800090570001001123456822022083018469155119">
-    <dDVId>3</dDVId>
-    <dFecFirma>2022-08-30T05:05:13</dFecFirma>
+  <DE Id="01800090570001001123456822022083018056668360">
+    <dDVId>4</dDVId>
+    <dFecFirma>2022-08-30T06:40:20</dFecFirma>
     <dSisFact>1</dSisFact>
     <gOpeDE>
       <iTipEmi>1</iTipEmi>
       <dDesTipEmi>Normal</dDesTipEmi>
-      <dCodSeg>846915511</dCodSeg>
+      <dCodSeg>805666836</dCodSeg>
     </gOpeDE>
     <gTimb>
       <iTiDE>1</iTiDE>
@@ -20,7 +20,7 @@
       <dFeIniT>2022-06-07</dFeIniT>
     </gTimb>
     <gDatGralOpe>
-      <dFeEmiDE>2022-08-30T05:05:13</dFeEmiDE>
+      <dFeEmiDE>2022-08-30T06:40:20</dFeEmiDE>
       <gOpeCom>
         <iTipTra>1</iTipTra>
         <dDesTipTra>Venta de mercadería</dDesTipTra>
