@@ -1,5 +1,9 @@
 import { generateElectronicDocument } from "../services.js";
-import { getTiposImpuestos, getTiposTransacciones } from "../database/index.js";
+import {
+  getTiposImpuestos,
+  getTiposTransacciones,
+  getTiposOperaciones,
+} from "../database/index.js";
 
 export const generateDe = async (req, res) => {
   let data = req.body;
@@ -21,6 +25,7 @@ export const generateDe = async (req, res) => {
     });
   }
 };
+
 export const _getTiposTransacciones = async (_, res) => {
   try {
     let data = await getTiposTransacciones();
@@ -40,6 +45,7 @@ export const _getTiposTransacciones = async (_, res) => {
     });
   }
 };
+
 export const _getTiposImpuestos = async (_, res) => {
   try {
     let data = await getTiposImpuestos();
@@ -60,4 +66,29 @@ export const _getTiposImpuestos = async (_, res) => {
   }
 };
 
-export default { generateDe, _getTiposTransacciones, _getTiposImpuestos };
+export const _getTiposOperaciones = async (_, res) => {
+  try {
+    let data = await getTiposOperaciones();
+    return res.status(200).send({
+      success: true,
+      message: "",
+      data,
+      errors: [],
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send({
+      success: false,
+      message: "",
+      data: [],
+      error: err,
+    });
+  }
+};
+
+export default {
+  generateDe,
+  _getTiposTransacciones,
+  _getTiposImpuestos,
+  _getTiposOperaciones,
+};
