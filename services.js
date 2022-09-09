@@ -34,6 +34,7 @@ import {
   getCiudadByCode,
   getPaisByCode,
   insertLog,
+  getTipoIndicadorPresenciaByCode,
 } from "./database/index.js";
 
 /**
@@ -1511,6 +1512,15 @@ export const generateElectronicDocument = (data) => {
       if (ciudadReceptor) {
         data.camposGeneralesDE.receptor.ciudad = ciudadReceptor.codigo;
         data.camposGeneralesDE.receptor.desCiudad = ciudadReceptor.descripcion;
+      }
+      /**Obtiene los datos del tipo de indicador de presencia*/
+      const tipoIndicadorPresencia = await getTipoIndicadorPresenciaByCode(
+        data.documentoElectronico.facturaElectronica.indicadorPresencia,
+        data.timbrado.numeroDocumento
+      );
+      if (tipoIndicadorPresencia) {
+        data.documentoElectronico.facturaElectronica.desIndicadorPresencia =
+          tipoIndicadorPresencia.descripcion;
       }
       /**Valida los datos */
       await validateData(data);

@@ -4,6 +4,7 @@ import {
   getTiposTransacciones,
   getTiposOperaciones,
   getNaturalezasReceptor,
+  getTiposIndicadoresPresencia,
 } from "../database/index.js";
 
 export const generateDe = async (req, res) => {
@@ -107,10 +108,31 @@ export const _getNaturalezasReceptor = async (_, res) => {
   }
 };
 
+export const _getTiposIndicadoresPresencia = async (_, res) => {
+  try {
+    let data = await getTiposIndicadoresPresencia();
+    return res.status(200).send({
+      success: true,
+      message: "",
+      data,
+      errors: [],
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send({
+      success: false,
+      message: "",
+      data: [],
+      error: err,
+    });
+  }
+};
+
 export default {
   generateDe,
   _getTiposTransacciones,
   _getTiposImpuestos,
   _getTiposOperaciones,
   _getNaturalezasReceptor,
+  _getTiposIndicadoresPresencia,
 };
