@@ -35,6 +35,7 @@ import {
   getPaisByCode,
   insertLog,
   getTipoIndicadorPresenciaByCode,
+  getCondicionOperacionByCode,
 } from "./database/index.js";
 
 /**
@@ -1521,6 +1522,15 @@ export const generateElectronicDocument = (data) => {
       if (tipoIndicadorPresencia) {
         data.documentoElectronico.facturaElectronica.desIndicadorPresencia =
           tipoIndicadorPresencia.descripcion;
+      }
+      /**Obtiene los datos de la condición de venta*/
+      const condicion = await getCondicionOperacionByCode(
+        data.documentoElectronico.condicionOperacion.condicion,
+        data.timbrado.numeroDocumento
+      );
+      if (condicion) {
+        data.documentoElectronico.condicionOperacion.desCondicion =
+          condicion.descripcion;
       }
       /**Valida los datos */
       await validateData(data);
