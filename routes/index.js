@@ -6,6 +6,7 @@ import {
   _getTiposImpuestos,
   _getTiposOperaciones,
   _getTiposTransacciones,
+  _getTiposPago,
 } from "../controllers/index.js";
 
 export const router = express.Router();
@@ -18,5 +19,6 @@ router.route("/de/naturalezasreceptor").get(_getNaturalezasReceptor);
 router
   .route("/de/tiposindicadorespresencia")
   .get(_getTiposIndicadoresPresencia);
+router.route("/de/tipospago").get(_getTiposPago);
 
 export default router;
