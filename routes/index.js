@@ -7,6 +7,7 @@ import {
   _getTiposOperaciones,
   _getTiposTransacciones,
   _getTiposPago,
+  _getCondicionesCredito,
 } from "../controllers/index.js";
 
 export const router = express.Router();
@@ -20,5 +21,6 @@ router
   .route("/de/tiposindicadorespresencia")
   .get(_getTiposIndicadoresPresencia);
 router.route("/de/tipospago").get(_getTiposPago);
+router.route("/de/condicionescredito").get(_getCondicionesCredito);
 
 export default router;

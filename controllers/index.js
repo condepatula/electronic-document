@@ -6,6 +6,7 @@ import {
   getNaturalezasReceptor,
   getTiposIndicadoresPresencia,
   getTiposPago,
+  getCondicionesCreditos,
 } from "../database/index.js";
 
 export const generateDe = async (req, res) => {
@@ -149,6 +150,26 @@ export const _getTiposPago = async (_, res) => {
   }
 };
 
+export const _getCondicionesCredito = async (_, res) => {
+  try {
+    let data = await getCondicionesCreditos();
+    return res.status(200).send({
+      success: true,
+      message: "",
+      data,
+      errors: [],
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send({
+      success: false,
+      message: "",
+      data: [],
+      error: err,
+    });
+  }
+};
+
 export default {
   generateDe,
   _getTiposTransacciones,
@@ -157,4 +178,5 @@ export default {
   _getNaturalezasReceptor,
   _getTiposIndicadoresPresencia,
   _getTiposPago,
+  _getCondicionesCredito,
 };
