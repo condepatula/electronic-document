@@ -1,13 +1,9 @@
-import { getTipoDeByCode } from "./database/index.js";
-
 const data = {
-  timbrado: {
-    tipoDE: "FCR",
-    numeroDocumento: 1234567,
-  },
+  cuotas: [{ moneda: 1 }],
 };
-const tipo = await getTipoDeByCode(
-  data.timbrado.tipoDE,
-  data.timbrado.numeroDocumento
-);
-console.log(tipo);
+
+data.cuotas.forEach((c) => {
+  c.desMoneda = "Guarani";
+});
+
+console.log(data.cuotas);

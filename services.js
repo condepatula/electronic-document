@@ -36,6 +36,7 @@ import {
   insertLog,
   getTipoIndicadorPresenciaByCode,
   getCondicionOperacionByCode,
+  getCondicionCreditoByCode,
 } from "./database/index.js";
 
 /**
@@ -1437,15 +1438,15 @@ export const generateElectronicDocument = (data) => {
         data.camposGeneralesDE.operacionComercial.desTipoImpuesto =
           tipoImpuesto.descripcion;
       }
-      /**Obtiene los datos de la moneda */
-      const moneda = await getMonedaByCode(
+      /**Obtiene los datos de la moneda de la operación comercial*/
+      const monedaOc = await getMonedaByCode(
         data.camposGeneralesDE.operacionComercial.moneda,
         data.timbrado.numeroDocumento
       );
-      if (moneda) {
-        data.camposGeneralesDE.operacionComercial.moneda = moneda.codigo;
+      if (monedaOc) {
+        data.camposGeneralesDE.operacionComercial.moneda = monedaOc.codigo;
         data.camposGeneralesDE.operacionComercial.desMoneda =
-          moneda.descripcion;
+          monedaOc.descripcion;
       }
       /**Obtiene los datos del departamento del emisor*/
       const departamentoEmisor = await getDepartamentoByCode(
@@ -1532,6 +1533,28 @@ export const generateElectronicDocument = (data) => {
         data.documentoElectronico.condicionOperacion.desCondicion =
           condicion.descripcion;
       }
+      /**Obtiene los datos de la condición de crédito*/
+      const condicionCredito = await getCondicionCreditoByCode(
+        data.documentoElectronico.condicionOperacion.pagoCredito.condicion,
+        data.timbrado.numeroDocumento
+      );
+      if (condicionCredito) {
+        data.documentoElectronico.condicionOperacion.pagoCredito.desCondicion =
+          condicionCredito.descripcion;
+      }
+      /**Obtiene los datos de la moneda de la cuota*/
+      data.documentoElectronico.condicionOperacion.pagoCredito.cuotas.forEach(
+        async (c) => {
+          let monedaCu = await getMonedaByCode(
+            c.moneda,
+            data.timbrado.numeroDocumento
+          );
+          if (monedaCu) {
+            c.moneda = monedaCu.codigo;
+            c.desMoneda = monedaCu.descripcion;
+          }
+        }
+      );
       /**Valida los datos */
       await validateData(data);
       /**Genera xml */
