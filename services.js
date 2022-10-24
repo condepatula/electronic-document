@@ -37,6 +37,8 @@ import {
   getTipoIndicadorPresenciaByCode,
   getCondicionOperacionByCode,
   getCondicionCreditoByCode,
+  getUnidadMedidaByCode,
+  getFormaAfectacionTributariaIvaByCode,
 } from "./database/index.js";
 
 /**
@@ -1555,6 +1557,29 @@ export const generateElectronicDocument = (data) => {
           }
         }
       );
+      /**Obtiene los datos de la unidad de medida */
+      data.documentoElectronico.items.forEach(async (i) => {
+        const unidadMedida = await getUnidadMedidaByCode(
+          i.unidadMedida,
+          data.timbrado.numeroDocumento
+        );
+        if (unidadMedida) {
+          i.unidadMedida = unidadMedida.codigo;
+          i.desUnidadMedida = unidadMedida.descripcion;
+        }
+      });
+      /**Obtiene los datos de la afectación tributaria */
+      data.documentoElectronico.items.forEach(async (i) => {
+        const afectacionTributariaIva =
+          await getFormaAfectacionTributariaIvaByCode(
+            i.iva.afectacionTributariaIva,
+            data.timbrado.numeroDocumento
+          );
+        if (afectacionTributariaIva) {
+          i.iva.desAfectacionTributariaIva =
+            afectacionTributariaIva.descripcion;
+        }
+      });
       /**Valida los datos */
       await validateData(data);
       /**Genera xml */

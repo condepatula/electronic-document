@@ -1,9 +1,12 @@
-const data = {
-  cuotas: [{ moneda: 1 }],
-};
+function rangeOfNumbers(startNum, endNum) {
+  if (startNum > endNum) {
+    return [];
+  } else {
+    const result = rangeOfNumbers(startNum + 1, endNum);
+    result.unshift(startNum);
 
-data.cuotas.forEach((c) => {
-  c.desMoneda = "Guarani";
-});
+    return result;
+  }
+}
 
-console.log(data.cuotas);
+console.log(rangeOfNumbers(9, 9));
