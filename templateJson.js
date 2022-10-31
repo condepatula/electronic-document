@@ -2606,7 +2606,7 @@ export const root = {
                 minOccurrence: 0,
                 maxOccurrence: 1,
                 required:
-                  "data['documentoElectronico']['condicionOperacion']['condicion']===2 ? true : false",
+                  "data['documentoElectronico']['condicionOperacion']['pagoCredito']['condicion']===2 ? true : false",
                 type: "number",
                 group: "E7.2",
                 id: "E644",

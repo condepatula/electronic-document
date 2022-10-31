@@ -106,7 +106,7 @@
               </p>
               <!-- Teléfono -->
               <p class="m-0 lh-sm">
-                <span class="fw-semibold">Teléfono:</span> {{camposGeneralesDE.receptor.telefono}}
+                <span class="fw-semibold">Teléfono:</span> {{camposGeneralesDE.receptor.telefono}} {{camposGeneralesDE.receptor.celular}}
               </p>
               <!-- Email -->
               <p class="m-0 lh-sm">
@@ -159,6 +159,9 @@
                 <!-- Tipo de transacción-->
                 <p class="m-0 lh-sm">
                   <span class="fw-semibold">Tipo de operación:</span> {{camposGeneralesDE.operacionComercial.desTransaccion}}
+                </p>
+                <p class="m-0 lh-sm">
+                  <span class="fw-semibold">Periodo:</span> {{documentoElectronico.condicionOperacion.periodo}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fw-semibold">Vencimiento:</span> {{documentoElectronico.condicionOperacion.pagoCredito.vencimiento}}
                 </p>
               </div>
             </div>

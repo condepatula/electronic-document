@@ -1479,43 +1479,52 @@ export const generateElectronicDocument = (data) => {
         data.camposGeneralesDE.emisor.desCiudad = ciudadEmisor.descripcion;
       }
       /**Obtiene los datos del pais del receptor*/
-      const paisReceptor = await getPaisByCode(
-        data.camposGeneralesDE.receptor.pais,
-        data.timbrado.numeroDocumento
-      );
-      if (paisReceptor) {
-        data.camposGeneralesDE.receptor.pais = paisReceptor.codigo;
-        data.camposGeneralesDE.receptor.desPais = paisReceptor.descripcion;
+      if (data.camposGeneralesDE.receptor.pais) {
+        const paisReceptor = await getPaisByCode(
+          data.camposGeneralesDE.receptor.pais,
+          data.timbrado.numeroDocumento
+        );
+        if (paisReceptor) {
+          data.camposGeneralesDE.receptor.pais = paisReceptor.codigo;
+          data.camposGeneralesDE.receptor.desPais = paisReceptor.descripcion;
+        }
       }
       /**Obtiene los datos del departamento del receptor*/
-      const departamentoReceptor = await getDepartamentoByCode(
-        data.camposGeneralesDE.receptor.departamento,
-        data.timbrado.numeroDocumento
-      );
-      if (departamentoReceptor) {
-        data.camposGeneralesDE.receptor.departamento =
-          departamentoReceptor.codigo;
-        data.camposGeneralesDE.receptor.desDepartamento =
-          departamentoReceptor.descripcion;
+      if (data.camposGeneralesDE.receptor.departamento) {
+        const departamentoReceptor = await getDepartamentoByCode(
+          data.camposGeneralesDE.receptor.departamento,
+          data.timbrado.numeroDocumento
+        );
+        if (departamentoReceptor) {
+          data.camposGeneralesDE.receptor.departamento =
+            departamentoReceptor.codigo;
+          data.camposGeneralesDE.receptor.desDepartamento =
+            departamentoReceptor.descripcion;
+        }
       }
       /**Obtiene los datos del distrito del receptor*/
-      const distritoReceptor = await getDistritoByCode(
-        data.camposGeneralesDE.receptor.distrito,
-        data.timbrado.numeroDocumento
-      );
-      if (distritoReceptor) {
-        data.camposGeneralesDE.receptor.distrito = distritoReceptor.codigo;
-        data.camposGeneralesDE.receptor.desDistrito =
-          distritoReceptor.descripcion;
+      if (data.camposGeneralesDE.receptor.distrito) {
+        const distritoReceptor = await getDistritoByCode(
+          data.camposGeneralesDE.receptor.distrito,
+          data.timbrado.numeroDocumento
+        );
+        if (distritoReceptor) {
+          data.camposGeneralesDE.receptor.distrito = distritoReceptor.codigo;
+          data.camposGeneralesDE.receptor.desDistrito =
+            distritoReceptor.descripcion;
+        }
       }
       /**Obtiene los datos de la ciudad del receptor*/
-      const ciudadReceptor = await getCiudadByCode(
-        data.camposGeneralesDE.receptor.ciudad,
-        data.timbrado.numeroDocumento
-      );
-      if (ciudadReceptor) {
-        data.camposGeneralesDE.receptor.ciudad = ciudadReceptor.codigo;
-        data.camposGeneralesDE.receptor.desCiudad = ciudadReceptor.descripcion;
+      if (data.camposGeneralesDE.receptor.ciudad) {
+        const ciudadReceptor = await getCiudadByCode(
+          data.camposGeneralesDE.receptor.ciudad,
+          data.timbrado.numeroDocumento
+        );
+        if (ciudadReceptor) {
+          data.camposGeneralesDE.receptor.ciudad = ciudadReceptor.codigo;
+          data.camposGeneralesDE.receptor.desCiudad =
+            ciudadReceptor.descripcion;
+        }
       }
       /**Obtiene los datos del tipo de indicador de presencia*/
       const tipoIndicadorPresencia = await getTipoIndicadorPresenciaByCode(
@@ -1545,41 +1554,45 @@ export const generateElectronicDocument = (data) => {
           condicionCredito.descripcion;
       }
       /**Obtiene los datos de la moneda de la cuota*/
-      data.documentoElectronico.condicionOperacion.pagoCredito.cuotas.forEach(
-        async (c) => {
-          let monedaCu = await getMonedaByCode(
-            c.moneda,
-            data.timbrado.numeroDocumento
-          );
-          if (monedaCu) {
-            c.moneda = monedaCu.codigo;
-            c.desMoneda = monedaCu.descripcion;
+      if (data.documentoElectronico.condicionOperacion.pagoCredito.cuotas) {
+        data.documentoElectronico.condicionOperacion.pagoCredito.cuotas.forEach(
+          async (c) => {
+            let monedaCu = await getMonedaByCode(
+              c.moneda,
+              data.timbrado.numeroDocumento
+            );
+            if (monedaCu) {
+              //console.log("Moneda cuota");
+              c.moneda = monedaCu.codigo;
+              c.desMoneda = monedaCu.descripcion;
+            }
           }
-        }
-      );
+        );
+      }
       /**Obtiene los datos de la unidad de medida */
-      data.documentoElectronico.items.forEach(async (i) => {
+      for (const item of data.documentoElectronico.items) {
         const unidadMedida = await getUnidadMedidaByCode(
-          i.unidadMedida,
+          item.unidadMedida,
           data.timbrado.numeroDocumento
         );
         if (unidadMedida) {
-          i.unidadMedida = unidadMedida.codigo;
-          i.desUnidadMedida = unidadMedida.descripcion;
+          item.unidadMedida = unidadMedida.codigo;
+          item.desUnidadMedida = unidadMedida.descripcion;
         }
-      });
+      }
       /**Obtiene los datos de la afectación tributaria */
-      data.documentoElectronico.items.forEach(async (i) => {
+      for (const item of data.documentoElectronico.items) {
         const afectacionTributariaIva =
           await getFormaAfectacionTributariaIvaByCode(
-            i.iva.afectacionTributariaIva,
+            item.iva.afectacionTributariaIva,
             data.timbrado.numeroDocumento
           );
         if (afectacionTributariaIva) {
-          i.iva.desAfectacionTributariaIva =
+          item.iva.desAfectacionTributariaIva =
             afectacionTributariaIva.descripcion;
         }
-      });
+      }
+      console.log(JSON.stringify(data));
       /**Valida los datos */
       await validateData(data);
       /**Genera xml */
@@ -1727,7 +1740,7 @@ const validate = (data, errors, template, key, index = undefined) => {
     //Obtiene el valor del atributo
     const value = eval(template.location);
     //Si el valor es definido
-    if (value !== undefined) {
+    if (value !== undefined && value !== "") {
       //Valida el tipo de dato
       if (typeof value !== template.type && value !== null && value !== "") {
         //Si es un array
@@ -2036,7 +2049,6 @@ const clean = (data, obj, errors, index = undefined) => {
 
   return errors;
 };
-
 export default {
   generateXml,
   signXml,

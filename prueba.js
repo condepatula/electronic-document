@@ -1,12 +1,24 @@
-function rangeOfNumbers(startNum, endNum) {
-  if (startNum > endNum) {
-    return [];
-  } else {
-    const result = rangeOfNumbers(startNum + 1, endNum);
-    result.unshift(startNum);
+const persona = {
+  nombre: "Juan",
+  apellido: "Ramirez",
+  items: [
+    {
+      codigoInterno: "287",
+      desProductoServicio: "SOLES OBSEQUIO",
+      unidadMedida: "UNI",
+      cantidad: 1,
+      valorItem: {
+        precioUnitario: 1600000,
+        totalBruto: 1600000,
+        valorRestaItem: {
+          totalOperacion: 1600000,
+        },
+      },
+    },
+  ],
+};
+console.log(persona);
 
-    return result;
-  }
-}
+persona.items[0].unidadMedida = 77;
 
-console.log(rangeOfNumbers(9, 9));
+console.log(persona);
