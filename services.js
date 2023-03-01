@@ -39,6 +39,8 @@ import {
   getCondicionCreditoByCode,
   getUnidadMedidaByCode,
   getFormaAfectacionTributariaIvaByCode,
+  getMotivoEmisionNotaCreditoByCode,
+  getTipoDocumentoAsociadoByCode,
 } from "./database/index.js";
 
 /**
@@ -1369,21 +1371,6 @@ export const generateElectronicDocument = (data) => {
         data.timbrado.tipoDE = tipoDe.tipo_de;
         data.timbrado.desTipoDE = tipoDe.descripcion;
       }
-      /**Registra log */
-      let logMessage = `Iniciando proceso de generación de documento electrónico.`;
-      console.log(
-        `[${moment(new Date()).format(
-          "DD/MM/YYYY hh:mm:ss.SSSZ"
-        )}]: ${logMessage}`
-      );
-      payload = {
-        tipoDe: data.timbrado.tipoDE,
-        numero: data.timbrado.numeroDocumento,
-        message: logMessage,
-        tipoLog: "info",
-      };
-      await insertLog(payload);
-      /**---------------------- */
       /**Calcula los valores para los atributos */
       const fecha = moment(new Date()).format("YYYY-MM-DDThh:mm:ss");
       const codigoSeguridad = generateSecurityCode();
@@ -1407,6 +1394,22 @@ export const generateElectronicDocument = (data) => {
       data.digitoVerificadorDE = calculateDv(cdc);
       data.fechaFirmaDigital = fecha;
       data.camposGeneralesDE.fechaEmisionDE = fecha;
+      /**Registra log */
+      let logMessage = `Iniciando proceso de generación de documento electrónico.`;
+      console.log(
+        `[${moment(new Date()).format(
+          "DD/MM/YYYY hh:mm:ss.SSSZ"
+        )}]: ${logMessage}`
+      );
+      payload = {
+        tipoDe: data.timbrado.tipoDE,
+        numero: data.timbrado.numeroDocumento,
+        message: logMessage,
+        tipoLog: "info",
+        cdc,
+      };
+      await insertLog(payload);
+      /**---------------------- */
       /**Obtiene datos del sistema de facturación */
       const sistemaFacturacion = await getSistemaFacturacionByCode(
         data.timbrado.numeroDocumento
@@ -1423,13 +1426,17 @@ export const generateElectronicDocument = (data) => {
         data.operacionDE.desTipoEmision = tipoEmision.descripcion;
       }
       /**Obtiene datos del tipo de transacción */
-      const tipoTransaccion = await getTipoTransaccionByCode(
-        data.camposGeneralesDE.operacionComercial.tipoTransaccion,
-        data.timbrado.numeroDocumento
-      );
-      if (tipoTransaccion) {
-        data.camposGeneralesDE.operacionComercial.desTransaccion =
-          tipoTransaccion.descripcion;
+      if (
+        data.camposGeneralesDE.operacionComercial.tipoTransaccion !== undefined
+      ) {
+        const tipoTransaccion = await getTipoTransaccionByCode(
+          data.camposGeneralesDE.operacionComercial.tipoTransaccion,
+          data.timbrado.numeroDocumento
+        );
+        if (tipoTransaccion) {
+          data.camposGeneralesDE.operacionComercial.desTransaccion =
+            tipoTransaccion.descripcion;
+        }
       }
       /**Obtiene los datos del tipo de impuesto */
       const tipoImpuesto = await getTipoImpuestoByCode(
@@ -1526,58 +1533,78 @@ export const generateElectronicDocument = (data) => {
             ciudadReceptor.descripcion;
         }
       }
-      /**Obtiene los datos del tipo de indicador de presencia*/
-      const tipoIndicadorPresencia = await getTipoIndicadorPresenciaByCode(
-        data.documentoElectronico.facturaElectronica.indicadorPresencia,
-        data.timbrado.numeroDocumento
-      );
-      if (tipoIndicadorPresencia) {
-        data.documentoElectronico.facturaElectronica.desIndicadorPresencia =
-          tipoIndicadorPresencia.descripcion;
+      if (data.documentoElectronico.facturaElectronica !== undefined) {
+        /**Obtiene los datos del tipo de indicador de presencia*/
+        const tipoIndicadorPresencia = await getTipoIndicadorPresenciaByCode(
+          data.documentoElectronico.facturaElectronica.indicadorPresencia,
+          data.timbrado.numeroDocumento
+        );
+        if (tipoIndicadorPresencia) {
+          data.documentoElectronico.facturaElectronica.desIndicadorPresencia =
+            tipoIndicadorPresencia.descripcion;
+        }
+      }
+      if (
+        data.documentoElectronico.notaCreditoDebitoElectronica !== undefined
+      ) {
+        /**Obtiene los datos del tipo de indicador de presencia*/
+        const motivoEmision = await getMotivoEmisionNotaCreditoByCode(
+          data.documentoElectronico.notaCreditoDebitoElectronica.motivoEmision,
+          data.timbrado.numeroDocumento
+        );
+        if (motivoEmision) {
+          data.documentoElectronico.notaCreditoDebitoElectronica.desMotivoEmision =
+            motivoEmision.descripcion;
+        }
       }
       /**Obtiene los datos de la condición de venta*/
-      const condicion = await getCondicionOperacionByCode(
-        data.documentoElectronico.condicionOperacion.condicion,
-        data.timbrado.numeroDocumento
-      );
-      if (condicion) {
-        data.documentoElectronico.condicionOperacion.desCondicion =
-          condicion.descripcion;
-      }
-      /**Obtiene los datos de la condición de crédito*/
-      const condicionCredito = await getCondicionCreditoByCode(
-        data.documentoElectronico.condicionOperacion.pagoCredito.condicion,
-        data.timbrado.numeroDocumento
-      );
-      if (condicionCredito) {
-        data.documentoElectronico.condicionOperacion.pagoCredito.desCondicion =
-          condicionCredito.descripcion;
-      }
-      /**Obtiene los datos de la moneda de la cuota*/
-      if (data.documentoElectronico.condicionOperacion.pagoCredito.cuotas) {
-        data.documentoElectronico.condicionOperacion.pagoCredito.cuotas.forEach(
-          async (c) => {
-            let monedaCu = await getMonedaByCode(
-              c.moneda,
-              data.timbrado.numeroDocumento
-            );
-            if (monedaCu) {
-              //console.log("Moneda cuota");
-              c.moneda = monedaCu.codigo;
-              c.desMoneda = monedaCu.descripcion;
-            }
-          }
+      if (data.documentoElectronico.condicionOperacion !== undefined) {
+        const condicion = await getCondicionOperacionByCode(
+          data.documentoElectronico.condicionOperacion.condicion,
+          data.timbrado.numeroDocumento
         );
+        if (condicion) {
+          data.documentoElectronico.condicionOperacion.desCondicion =
+            condicion.descripcion;
+        }
+        /**Obtiene los datos de la condición de crédito*/
+        const condicionCredito = await getCondicionCreditoByCode(
+          data.documentoElectronico.condicionOperacion.pagoCredito.condicion,
+          data.timbrado.numeroDocumento
+        );
+        if (condicionCredito) {
+          data.documentoElectronico.condicionOperacion.pagoCredito.desCondicion =
+            condicionCredito.descripcion;
+        }
+
+        /**Obtiene los datos de la moneda de la cuota*/
+        if (data.documentoElectronico.condicionOperacion.pagoCredito.cuotas) {
+          data.documentoElectronico.condicionOperacion.pagoCredito.cuotas.forEach(
+            async (c) => {
+              let monedaCu = await getMonedaByCode(
+                c.moneda,
+                data.timbrado.numeroDocumento
+              );
+              if (monedaCu) {
+                //console.log("Moneda cuota");
+                c.moneda = monedaCu.codigo;
+                c.desMoneda = monedaCu.descripcion;
+              }
+            }
+          );
+        }
       }
       /**Obtiene los datos de la unidad de medida */
       for (const item of data.documentoElectronico.items) {
-        const unidadMedida = await getUnidadMedidaByCode(
-          item.unidadMedida,
-          data.timbrado.numeroDocumento
-        );
-        if (unidadMedida) {
-          item.unidadMedida = unidadMedida.codigo;
-          item.desUnidadMedida = unidadMedida.descripcion;
+        if (item.unidadMedida !== undefined) {
+          const unidadMedida = await getUnidadMedidaByCode(
+            item.unidadMedida,
+            data.timbrado.numeroDocumento
+          );
+          if (unidadMedida) {
+            item.unidadMedida = unidadMedida.codigo;
+            item.desUnidadMedida = unidadMedida.descripcion;
+          }
         }
       }
       /**Obtiene los datos de la afectación tributaria */
@@ -1592,7 +1619,18 @@ export const generateElectronicDocument = (data) => {
             afectacionTributariaIva.descripcion;
         }
       }
-      console.log(JSON.stringify(data));
+      /**Obtiene tipo de documento asociado a la nota de crédito */
+      if (data.DeAsociado !== undefined) {
+        for (const item of data.DeAsociado) {
+          const tipoDocumentoAsociado = await getTipoDocumentoAsociadoByCode(
+            item.tipo,
+            data.timbrado.numeroDocumento
+          );
+          if (tipoDocumentoAsociado) {
+            item.desTipo = tipoDocumentoAsociado.descripcion;
+          }
+        }
+      }
       /**Valida los datos */
       await validateData(data);
       /**Genera xml */
@@ -1666,8 +1704,9 @@ export const generateElectronicDocument = (data) => {
         "Kude enviado de prueba",
         pathKude
       );
-      resolve();
+      resolve(cdc);
     } catch (err) {
+      //console.log(err);
       /**Registra log */
       err.details.forEach(async (e) => {
         payload = {

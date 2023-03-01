@@ -1339,7 +1339,7 @@ export const getMotivoEmisionNotaCreditoByCode = (
     pool.query(
       `SELECT *
                     FROM motivo_emision_nota_credito a
-                    WHERE a.codigo_externo=$1`,
+                    WHERE a.codigo=$1`,
       [param],
       (err, res) => {
         if (err) {
@@ -2403,6 +2403,7 @@ export const insertLog = (payload) => {
         estado = null,
         message,
         tipoLog,
+        cdc = null,
       } = payload;
       const existDe = await pool.query(`SELECT * FROM de a WHERE a.numero=$1`, [
         numero,
@@ -2434,6 +2435,12 @@ export const insertLog = (payload) => {
         if (estado) {
           await pool.query(`UPDATE de SET estado=$1 WHERE id=$2`, [
             estado,
+            existDe.rows[0].id,
+          ]);
+        }
+        if (cdc !== "" && cdc !== null && cdc !== undefined) {
+          await pool.query(`UPDATE de SET cdc=$1 WHERE id=$2 AND cdc IS NULL`, [
+            cdc,
             existDe.rows[0].id,
           ]);
         }

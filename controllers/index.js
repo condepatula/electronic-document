@@ -7,15 +7,17 @@ import {
   getTiposIndicadoresPresencia,
   getTiposPago,
   getCondicionesCreditos,
+  getMotivosEmisionNotaCredito,
 } from "../database/index.js";
 
 export const generateDe = async (req, res) => {
   let data = req.body;
   try {
-    await generateElectronicDocument(data);
+    const cdc = await generateElectronicDocument(data);
 
     return res.status(200).send({
       success: true,
+      cdc,
       message:
         "Proceso de generación de documento electrónico ha finalizado exitosamente.",
       errors: [],
@@ -170,6 +172,26 @@ export const _getCondicionesCredito = async (_, res) => {
   }
 };
 
+export const _getMotivoEmisionNc = async (_, res) => {
+  try {
+    let data = await getMotivosEmisionNotaCredito();
+    return res.status(200).send({
+      success: true,
+      message: "",
+      data,
+      errors: [],
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send({
+      success: false,
+      message: "",
+      data: [],
+      error: err,
+    });
+  }
+};
+
 export default {
   generateDe,
   _getTiposTransacciones,
@@ -179,4 +201,5 @@ export default {
   _getTiposIndicadoresPresencia,
   _getTiposPago,
   _getCondicionesCredito,
+  _getMotivoEmisionNc,
 };

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css"
+    />
+    <style>
+      html {
+        -webkit-print-color-adjust: exact;
+      }
+      
+      .table>tbody>tr>td, .table>tbody>tr>th{
+        padding-top:0; 
+        padding-bottom:0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="p-4">
+      <div class="card">
+        <div class="card-header text-center fw-semibold" style="font-size: 12px;">
+          KuDE de Nota de Crédito Electrónica
+        </div>
+        <!-- Datos del emisor-->
+        <div class="card-body p-2">
+          <div class="d-flex justify-content-between">
+            <div style="width: 450px;">
+              <!-- Logo de la empresa-->
+              <img
+                class="logo"
+                src={{logo}}
+                class="img-fluid"
+                alt="Logo image"
+                style="width: 200px;"
+              />
+              <div class="mt-2" style="font-size: 12px;">
+                <!-- Nombre-->
+                <p class="m-0 lh-sm">{{camposGeneralesDE.emisor.nombre}}</p>
+                <!-- Dirección-->
+                <p class="m-0 lh-sm">
+                  {{camposGeneralesDE.emisor.direccion}}
+                </p>
+                <!-- Ciudad-->
+                <p class="m-0 lh-sm">Ciudad: {{camposGeneralesDE.emisor.desCiudad}}</p>
+                <!-- Teléfono-->
+                <p class="m-0 lh-sm">Teléfono: {{camposGeneralesDE.emisor.telefono}}</p>
+                <!-- Email-->
+                <p class="m-0 lh-sm">{{camposGeneralesDE.emisor.email}}</p>
+                <!-- Actividad económica-->
+                {{#each camposGeneralesDE.emisor.actividadEconomica}}
+                  <p class="m-0 lh-sm">Actividad económica: {{this.desActividad}}</p>
+                {{/each}}
+              </div>
+            </div>
+            <div class="d-flex flex-column justify-content-between">
+              <div class="mt-0" style="font-size: 13px">
+                <!-- RUC-->
+                <p class="m-0 lh-sm">RUC: {{camposGeneralesDE.emisor.ruc}}-{{camposGeneralesDE.emisor.digitoVerificador}}</p>
+                <!-- Timbrado-->
+                <p class="m-0 lh-sm">Timbrado N°: {{timbrado.numeroTimbrado}}</p>
+                <!-- Fecha de vigencia del timbrado-->
+                <p class="m-0 lh-sm">Inicio de vigencia: {{formatDate timbrado.fechaInicioVigenciaTimbrado}}</p>
+              </div>
+              <div class="fs-6">
+                <p class="m-0 lh-sm fw-bold">NOTA DE CRÉDITO ELECTRÓNICA</p>
+                <!-- Número de factura-->
+                <p class="m-0 lh-sm">{{timbrado.establecimiento}}-{{timbrado.puntoExpedicion}}-{{timbrado.numeroDocumento}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card mt-2">
+        <div class="card-body p-2">
+          <div class="d-flex justify-content-between">
+            <!-- Datos del receptor -->
+            <div style="font-size: 12px">
+              <!-- Fecha/Hora de emisión -->
+              <p class="m-0 lh-sm">
+                <span class="fw-semibold">Fecha y hora de emisión:</span>
+                {{formatDateTime camposGeneralesDE.fechaEmisionDE}}
+              </p>
+              <!-- RUC o número de documento, naturaleza [1: contribuyente][2: no contribuyente]-->
+              {{#eq camposGeneralesDE.receptor.naturaleza 1}}
+                <p class="m-0 lh-sm">
+                    <span class="fw-semibold">RUC/Documento de Identidad N°:</span>
+                    {{camposGeneralesDE.receptor.ruc}}-{{camposGeneralesDE.receptor.digitoVerificador}}
+                </p>
+              {{else}}
+                <p class="m-0 lh-sm">
+                    <span class="fw-semibold">RUC/Documento de Identidad N°:</span>
+                    {{camposGeneralesDE.receptor.numeroDocumento}}
+                </p>
+              {{/eq}}
+              <!-- Nombre o razón social -->
+              <p class="m-0 lh-sm">
+                <span class="fw-semibold">Nombre o Razón Social:</span> {{camposGeneralesDE.receptor.nombre}}
+              </p>
+              <!-- Dirección -->
+              <p class="m-0 lh-sm">
+                <span class="fw-semibold">Dirección:</span> {{camposGeneralesDE.receptor.direccion}}
+              </p>
+              <!-- Teléfono -->
+              <p class="m-0 lh-sm">
+                <span class="fw-semibold">Teléfono:</span> {{camposGeneralesDE.receptor.telefono}} {{camposGeneralesDE.receptor.celular}}
+              </p>
+              <!-- Email -->
+              <p class="m-0 lh-sm">
+                <span class="fw-semibold">Email:</span> {{camposGeneralesDE.receptor.email}}
+              </p>
+            </div>
+            <!-- Datos de la transacción -->
+            <div class="mt-0" style="font-size: 12px">
+              <div>
+                <!-- Condición de la operación, condición [1: Contado][2: Crédito]-->
+                <div class="d-flex">
+                  <span class="fw-semibold">Condición de venta:&nbsp;</span>
+                  <span>Contado</span>
+                  {{#eq documentoElectronico.condicionOperacion.condicion 1}}
+                    <span class="badge bg-light border text-dark ms-1">X</span>
+                  {{else}}
+                    <span class="badge bg-light border text-dark ms-1">&nbsp;&nbsp;</span>
+                  {{/eq}}
+                  <span class="ms-1">Crédito</span>
+                  {{#eq documentoElectronico.condicionOperacion.condicion 2}}
+                    <span class="badge bg-light border text-dark ms-1">X</span>
+                  {{else}}
+                    <span class="badge bg-light border text-dark ms-1">&nbsp;&nbsp;</span>
+                  {{/eq}}
+                </div>
+                <!-- Cantidad de cuotas, condición [1: Contado][2: Crédito]-->
+                {{#eq documentoElectronico.condicionOperacion.condicion 2}}
+                    <p class="m-0 lh-sm">
+                        <span class="fw-semibold">Cuotas:</span> {{documentoElectronico.condicionOperacion.pagoCredito.cantidadCuotas}}
+                    </p>
+                {{else}}
+                    <p class="m-0 lh-sm">
+                        <span class="fw-semibold">Cuotas:</span> 0
+                    </p>
+                {{/eq}}
+                <!-- Moneda-->
+                <p class="m-0 lh-sm">
+                  <span class="fw-semibold">Moneda:</span> {{camposGeneralesDE.operacionComercial.desMoneda}}
+                </p>
+                <!-- Tipo de cambio-->
+                {{#eq camposGeneralesDE.operacionComercial.moneda "PYG"}}
+                    <p class="m-0 lh-sm">
+                        <span class="fw-semibold">Tipo de cambio:</span> 
+                    </p>
+                {{else}}
+                    <p class="m-0 lh-sm">
+                        <span class="fw-semibold">Tipo de cambio:</span> {{camposGeneralesDE.operacionComercial.tipoCambio}}
+                    </p>
+                {{/eq}}
+                <!-- Tipo de transacción-->
+                <p class="m-0 lh-sm">
+                  <span class="fw-semibold">Tipo de operación:</span> {{camposGeneralesDE.operacionComercial.desTransaccion}}
+                </p>
+                <p class="m-0 lh-sm">
+                  <span class="fw-semibold">Motivo de la emisión:</span> {{documentoElectronico.notaCreditoDebitoElectronica.desMotivoEmision}}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Detalle de items-->
+      <table class="table table-borderless my-2 border" style="font-size: 12px">
+        <thead
+          class="text-center bg-light"
+          style="line-height: 8px;"
+        >
+          <tr>
+            <th scope="col" class="fw-semibold" style="width: 20px">Código</th>
+            <th
+              scope="col"
+              class="fw-semibold border-start text-start"
+              style="width: 200px"
+            >
+              Descripción
+            </th>
+            <th
+              scope="col"
+              class="fw-semibold border-start"
+              style="width: 20px"
+            >
+              Cantidad
+            </th>
+            <th
+              scope="col"
+              class="fw-semibold border-start"
+              style="width: 80px"
+            >
+              Precio
+            </th>
+            <th
+              scope="col"
+              class="fw-semibold border-start"
+              style="width: 80px"
+            >
+              Descuento
+            </th>
+            <th
+              scope="col"
+              colspan="3"
+              class="fw-semibold border-start"
+              style="width: 240px"
+            >
+              Valor de Venta
+            </th>
+          </tr>
+          <tr>
+            <th scope="col" class="fw-semibold border-bottom">&nbsp;</th>
+            <th scope="col" class="fw-semibold border-start border-bottom">
+              &nbsp;
+            </th>
+            <th scope="col" class="fw-semibold border-start border-bottom">
+              &nbsp;
+            </th>
+            <th scope="col" class="fw-semibold border-start border-bottom">
+              Unitario
+            </th>
+            <th scope="col" class="fw-semibold border-start border-bottom">
+              &nbsp;
+            </th>
+            <th
+              scope="col"
+              class="fw-semibold border-start border-bottom"
+              style="width: 80px"
+            >
+              Exentas
+            </th>
+            <th
+              scope="col"
+              class="fw-semibold border-bottom"
+              style="width: 80px"
+            >
+              5%
+            </th>
+            <th
+              scope="col"
+              class="fw-semibold border-bottom"
+              style="width: 80px"
+            >
+              10%
+            </th>
+          </tr>
+        </thead>
+        <tbody class="text-center">
+           {{#each details}}
+                <tr>
+                    <!-- Código interno del producto o servicio -->
+                    <th scope="row" class="fw-normal">{{this.codigoInterno}}</th>
+                    <!-- Descripción del producto o servicio -->
+                    <td
+                    class="border-start text-start"
+                    style="width: 200px; word-wrap: break-word; display: block"
+                    >
+                        {{this.desProductoServicio}}
+                    </td>
+                    <!-- Cantidad -->
+                    <td class="border-start">{{this.cantidad}}</td>
+                    <!-- Precio unitario -->
+                    <td class="border-start text-end">{{formatNumber this.valorItem.precioUnitario}}</td>
+                    <!-- Descuento -->
+                    <td class="border-start text-end">{{formatNumber this.valorItem.valorRestaItem.descuento}}</td>
+                    <!-- Exento -->
+                    {{#eq this.iva.afectacionTributariaIva 3}}
+                       <td class="border-start text-end">{{formatNumber this.valorItem.valorRestaItem.totalOperacion}}</td>
+                    {{else}}
+                       <td class="border-start text-end">0</td>
+                    {{/eq}}
+                    <!-- IVA 5% -->
+                    {{#eq this.iva.tasaIva 5}}
+                       <td class="border-start text-end">{{formatNumber this.valorItem.valorRestaItem.totalOperacion}}</td>                       
+                    {{else}}
+                       <td class="border-start text-end">0</td>
+                    {{/eq}}
+                    <!-- IVA 10% -->
+                    {{#eq this.iva.tasaIva 10}}
+                       <td class="border-start text-end">{{formatNumber this.valorItem.valorRestaItem.totalOperacion}}</td>                       
+                    {{else}}
+                       <td class="border-start text-end">0</td>
+                    {{/eq}}
+                </tr>
+           {{/each}}
+           {{#each items}}
+              <tr>
+                <th scope="row" class="fw-normal">&nbsp;</th>
+                <td class="border-start text-start">&nbsp;</td>
+                <td class="border-start">&nbsp;</td>
+                <td class="border-start text-end">&nbsp;</td>
+                <td class="border-start text-end">&nbsp;</td>
+                <td class="border-start text-end">&nbsp;</td>
+                <td class="border-start text-end">&nbsp;</td>
+                <td class="border-start text-end">&nbsp;</td>
+              </tr>
+           {{/each}}
+        </tbody>
+        {{#toShowSubtotal pages page}}
+          <tfoot
+            class="border-top fw-semibold bg-light"
+            style="line-height: 5px;"
+          >
+            <tr class="border-bottom">
+              <td colspan="5">SUBTOTAL:</td>
+              <td class="border-start text-end">{{formatNumber subtotalesTotales.subtotalExenta}}</td>
+              <td class="border-start text-end">{{formatNumber subtotalesTotales.subtotalIvaIncluido5}}</td>
+              <td class="border-start text-end">{{formatNumber subtotalesTotales.subtotalIvaIncluido10}}</td>
+            </tr>
+            <tr class="border-bottom">
+              <td colspan="5">TOTAL DE LA OPERACIÓN:</td>
+              <td class="text-end"></td>
+              <td class="text-end"></td>
+              <td class="border-start text-end">{{formatNumber subtotalesTotales.totalBruto}}</td>
+            </tr>
+            <tr class="border-bottom">
+              <td colspan="5">TOTAL EN GUARANÍES:</td>
+              <td class="text-end"></td>
+              <td class="text-end"></td>
+              <td class="border-start text-end">{{formatNumber subtotalesTotales.dTotalGs}}</td>
+            </tr>
+            <tr>
+              <td colspan="2">LIQUIDACIÓN IVA:</td>
+              <td>(5%)</td>
+              <td>{{formatNumber subtotalesTotales.iva5}}</td>
+              <td>(10%)</td>
+              <td>{{formatNumber subtotalesTotales.iva10}}</td>
+              <td class="text-end">TOTAL IVA:</td>
+              <td class="text-end">{{formatNumber subtotalesTotales.totalIva}}</td>
+            </tr>
+          </tfoot>
+        {{/toShowSubtotal}}
+      </table>
+      {{#toShowQr pages page}}
+        <div class="card mt-2">
+          <div class="card-body p-2" style="font-size: 12px">
+            <div class="d-flex">
+              <div style="width: 100px;">
+                <img src={{qr}} alt="qr" style="width: 90px;"/>
+              </div>
+              <div>
+                <p class="p-0 m-0 lh-sm">
+                  Consulte la validez de esta Factura Electrónica con el número de
+                  CDC impreso abajo en:
+                </p>
+                <a class="p-0" href="https://ekuatia.set.gov.py/consultas" style="text-decoration:none;"
+                  >https://ekuatia.set.gov.py/consultas
+                </a>
+                <p class="fw-semibold mt-1" style="font-size: 14px;">
+                  CDC: {{id}}
+                </p>
+              </div>
+            </div>
+            <p class="m-0 fw-semibold" style="font-size: 11px;">
+              ESTE DOCUMENTO ES UNA REPRESENTACIÓN GRÁFICA DE UN DOCUMENTO
+              ELECTRÓNICO (XML)
+            </p>
+            <p class="m-0" style="font-size: 11px;"><span class="fw-semibold">INFORMACIÓN ADICIONAL: </span>{{informacionAdicional}}</p>
+            <p style="font-size:10px;">
+              Si su documento electrónico presenta algún error puede solicitar la
+              modificación dentro de las 72 horas siguientes de la emisión de este
+              comprobante.
+            </p>
+          </div>
+        </div>
+      {{/toShowQr}}
+    </div>
+  </body>
+</html>

@@ -8,6 +8,7 @@ import {
   _getTiposTransacciones,
   _getTiposPago,
   _getCondicionesCredito,
+  _getMotivoEmisionNc,
 } from "../controllers/index.js";
 
 export const router = express.Router();
@@ -22,5 +23,6 @@ router
   .get(_getTiposIndicadoresPresencia);
 router.route("/de/tipospago").get(_getTiposPago);
 router.route("/de/condicionescredito").get(_getCondicionesCredito);
+router.route("/de/motivoemisionnc").get(_getMotivoEmisionNc);
 
 export default router;
