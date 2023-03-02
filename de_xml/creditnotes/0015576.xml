@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+<rDE xmlns="http://ekuatia.set.gov.py/sifen/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://ekuatia.set.gov.py/sifen/xsd/siRecepDE_v150.xsd">
+  <dVerFor>150</dVerFor>
+  <DE Id="05800090578001001001557622023030213425643111">
+    <dDVId>0</dDVId>
+    <dFecFirma>2023-03-02T10:54:43</dFecFirma>
+    <dSisFact>1</dSisFact>
+    <gOpeDE>
+      <iTipEmi>1</iTipEmi>
+      <dDesTipEmi>Normal</dDesTipEmi>
+      <dCodSeg>342564311</dCodSeg>
+    </gOpeDE>
+    <gTimb>
+      <iTiDE>5</iTiDE>
+      <dDesTiDE>Nota de crédito electrónica</dDesTiDE>
+      <dNumTim>16064471</dNumTim>
+      <dEst>001</dEst>
+      <dPunExp>001</dPunExp>
+      <dNumDoc>0015576</dNumDoc>
+      <dFeIniT>2022-12-05</dFeIniT>
+    </gTimb>
+    <gDatGralOpe>
+      <dFeEmiDE>2023-03-02T10:54:43</dFeEmiDE>
+      <gOpeCom>
+        <iTImp>1</iTImp>
+        <dDesTImp>IVA</dDesTImp>
+        <cMoneOpe>PYG</cMoneOpe>
+        <dDesMoneOpe>Guarani</dDesMoneOpe>
+      </gOpeCom>
+      <gEmis>
+        <dRucEm>80009057</dRucEm>
+        <dDVEmi>8</dDVEmi>
+        <iTipCont>2</iTipCont>
+        <dNomEmi>SHOPPING CENTERS PARAGUAY S.A.</dNomEmi>
+        <dDirEmi>Avda. Aviadores del Chaco e/ Prof. Delia Frutos de González y Juan XXIII</dDirEmi>
+        <dNumCas>0</dNumCas>
+        <cDepEmi>1</cDepEmi>
+        <dDesDepEmi>CAPITAL</dDesDepEmi>
+        <cDisEmi>1</cDisEmi>
+        <dDesDisEmi>ASUNCION (DISTRITO)</dDesDisEmi>
+        <cCiuEmi>1</cCiuEmi>
+        <dDesCiuEmi>ASUNCION (DISTRITO)</dDesCiuEmi>
+        <dTelEmi>021611780</dTelEmi>
+        <dEmailE>info@delsol.com.py</dEmailE>
+        <gActEco>
+          <cActEco>68100</cActEco>
+          <dDesActEco>Actividades inmobiliarias realizadas con bienes propios o arrendados</dDesActEco>
+        </gActEco>
+      </gEmis>
+      <gDatRec>
+        <iNatRec>1</iNatRec>
+        <iTiOpe>1</iTiOpe>
+        <cPaisRec>PRY</cPaisRec>
+        <dDesPaisRe>Paraguay</dDesPaisRe>
+        <iTiContRec>2</iTiContRec>
+        <dRucRec>80028213</dRucRec>
+        <dDVRec>2</dDVRec>
+        <dNomRec>MERCO SUR SPORTS WORLD CORPORATION</dNomRec>
+        <dDirRec>AVDA. ARTIGAS NRO.1.238</dDirRec>
+        <dNumCasRec>0</dNumCasRec>
+        <cDepRec>12</cDepRec>
+        <dDesDepRec>CENTRAL</dDesDepRec>
+        <cDisRec>1</cDisRec>
+        <dDesDisRec>ASUNCION (DISTRITO)</dDesDisRec>
+        <cCiuRec>1</cCiuRec>
+        <dDesCiuRec>ASUNCION (DISTRITO)</dDesCiuRec>
+        <dTelRec>021664-173</dTelRec>
+        <dCelRec/>
+        <dEmailRec>lutormig@gmail.com</dEmailRec>
+      </gDatRec>
+    </gDatGralOpe>
+    <gDtipDE>
+      <gCamNCDE>
+        <iMotEmi>3</iMotEmi>
+        <dDesMotEmi>Descuento</dDesMotEmi>
+      </gCamNCDE>
+      <gCamItem>
+        <dCodInt>2</dCodInt>
+        <dDesProSer>ARRENDAMIENTO PORCENTUAL</dDesProSer>
+        <cUniMed>77</cUniMed>
+        <dDesUniMed>Unidad</dDesUniMed>
+        <dCantProSer>1</dCantProSer>
+        <gValorItem>
+          <dPUniProSer>400000</dPUniProSer>
+          <dTotBruOpeItem>400000</dTotBruOpeItem>
+          <gValorRestaItem>
+            <dTotOpeItem>400000</dTotOpeItem>
+          </gValorRestaItem>
+        </gValorItem>
+        <gCamIVA>
+          <iAfecIVA>1</iAfecIVA>
+          <dDesAfecIVA>Gravado IVA</dDesAfecIVA>
+          <dPropIVA>100</dPropIVA>
+          <dTasaIVA>10</dTasaIVA>
+          <dBasGravIVA>363636</dBasGravIVA>
+          <dLiqIVAItem>36364</dLiqIVAItem>
+        </gCamIVA>
+      </gCamItem>
+    </gDtipDE>
+    <gTotSub>
+      <dSubExe>0</dSubExe>
+      <dSubExo>0</dSubExo>
+      <dSub5>0</dSub5>
+      <dSub10>400000</dSub10>
+      <dTotOpe>400000</dTotOpe>
+      <dTotDesc>0</dTotDesc>
+      <dTotDescGlotem>0</dTotDescGlotem>
+      <dTotAntItem>0</dTotAntItem>
+      <dTotAnt>0</dTotAnt>
+      <dPorcDescTotal>0</dPorcDescTotal>
+      <dDescTotal>0</dDescTotal>
+      <dAnticipo>0</dAnticipo>
+      <dRedon>0</dRedon>
+      <dComi>0</dComi>
+      <dTotGralOpe>400000</dTotGralOpe>
+      <dIVA5>0</dIVA5>
+      <dIVA10>36364</dIVA10>
+      <dLiqTotIVA5>0</dLiqTotIVA5>
+      <dLiqTotIVA10>0</dLiqTotIVA10>
+      <dIVAComi>0</dIVAComi>
+      <dTotIVA>36364</dTotIVA>
+      <dBaseGrav5>0</dBaseGrav5>
+      <dBaseGrav10>363636</dBaseGrav10>
+      <dTBasGraIVA>363636</dTBasGraIVA>
+    </gTotSub>
+    <gCamDEAsoc>
+      <iTipDocAso>1</iTipDocAso>
+      <dDesTipDocAso>Electrónico</dDesTipDocAso>
+      <dCdCDERef>01800090578001001007433122023022217239126317</dCdCDERef>
+    </gCamDEAsoc>
+  </DE>
+</rDE>
