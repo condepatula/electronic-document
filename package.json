@@ -5,6 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "start":"set NODE_ENV=development&& nodemon prueba.js",
     "dev": "set NODE_ENV=development&&set NODE_TLS_REJECT_UNAUTHORIZED=0&& nodemon index.js",
     "prod": "set NODE_ENV=production&& node home.js"
   },

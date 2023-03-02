@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <rDE xmlns="http://ekuatia.set.gov.py/sifen/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://ekuatia.set.gov.py/sifen/xsd/siRecepDE_v150.xsd">
   <dVerFor>150</dVerFor>
-  <DE Id="05800090578001001001557622023030112975359549">
-    <dDVId>6</dDVId>
-    <dFecFirma>2023-03-01T05:00:25</dFecFirma>
+  <DE Id="05800090578001001001557622023030213425643111">
+    <dDVId>0</dDVId>
+    <dFecFirma>2023-03-02T10:54:43</dFecFirma>
     <dSisFact>1</dSisFact>
     <gOpeDE>
       <iTipEmi>1</iTipEmi>
       <dDesTipEmi>Normal</dDesTipEmi>
-      <dCodSeg>297535954</dCodSeg>
+      <dCodSeg>342564311</dCodSeg>
     </gOpeDE>
     <gTimb>
       <iTiDE>5</iTiDE>
@@ -20,7 +20,7 @@
       <dFeIniT>2022-12-05</dFeIniT>
     </gTimb>
     <gDatGralOpe>
-      <dFeEmiDE>2023-03-01T05:00:25</dFeEmiDE>
+      <dFeEmiDE>2023-03-02T10:54:43</dFeEmiDE>
       <gOpeCom>
         <iTImp>1</iTImp>
         <dDesTImp>IVA</dDesTImp>

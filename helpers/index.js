@@ -100,7 +100,7 @@ export const generateSHA256 = (str) => {
 };
 
 export const readPrivateKeyFromProtectedPem = (key, passphrase) => {
-  const pathKey = new URL(`cert/${key}`, import.meta.url);
+  const pathKey = new URL(`../cert/${key}`, import.meta.url);
   const _key = pathKey.pathname.substring(1, pathKey.pathname.length);
   let pem = fs.readFileSync(_key).toString();
   let privateKey = forge.pki.decryptRsaPrivateKey(pem, passphrase);
@@ -108,7 +108,7 @@ export const readPrivateKeyFromProtectedPem = (key, passphrase) => {
 };
 
 export const removeHeaders = (cert) => {
-  const pathCert = new URL(`cert/${cert}`, import.meta.url);
+  const pathCert = new URL(`../cert/${cert}`, import.meta.url);
   const _cert = pathCert.pathname.substring(1, pathCert.pathname.length);
   var pem = /-----BEGIN (\w*)-----([^-]*)-----END (\w*)-----/g.exec(
     fs.readFileSync(_cert).toString()

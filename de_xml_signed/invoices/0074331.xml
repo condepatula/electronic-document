@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <rDE xmlns="http://ekuatia.set.gov.py/sifen/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://ekuatia.set.gov.py/sifen/xsd/siRecepDE_v150.xsd">
   <dVerFor>150</dVerFor>
-  <DE Id="01800090578001001007433122023022217239126317">
-    <dDVId>3</dDVId>
-    <dFecFirma>2023-02-22T11:39:45</dFecFirma>
+  <DE Id="01800090578001001007433122023030215630041324">
+    <dDVId>6</dDVId>
+    <dFecFirma>2023-03-02T06:06:03</dFecFirma>
     <dSisFact>1</dSisFact>
     <gOpeDE>
       <iTipEmi>1</iTipEmi>
       <dDesTipEmi>Normal</dDesTipEmi>
-      <dCodSeg>723912631</dCodSeg>
+      <dCodSeg>563004132</dCodSeg>
     </gOpeDE>
     <gTimb>
       <iTiDE>1</iTiDE>
@@ -20,7 +20,7 @@
       <dFeIniT>2022-06-10</dFeIniT>
     </gTimb>
     <gDatGralOpe>
-      <dFeEmiDE>2023-02-22T11:39:45</dFeEmiDE>
+      <dFeEmiDE>2023-03-02T06:06:03</dFeEmiDE>
       <gOpeCom>
         <iTipTra>1</iTipTra>
         <dDesTipTra>Venta de mercadería</dDesTipTra>
@@ -184,16 +184,16 @@
     <SignedInfo>
       <CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
       <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
-      <Reference URI="#01800090578001001007433122023022217239126317">
+      <Reference URI="#01800090578001001007433122023030215630041324">
         <Transforms>
           <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
           <Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
         </Transforms>
         <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
-        <DigestValue>pikX0XHxIzghwJorWlxhpP0ZXVvzR7XDBM9A2t9saAk=</DigestValue>
+        <DigestValue>LqlV9pP8x2MPkxvuuEZF9Zrn4ezSR5LvwhDoF4xyk2E=</DigestValue>
       </Reference>
     </SignedInfo>
-    <SignatureValue>CsZjSEYoaWhgU0EIqzjam0IK6RtnNDN6RxdikIBgOW5Vg4KweeQLORRyd7GODPVj0J1Q1xtYn0NzUS6E8Nx9n61o/mnPILc6XLKdfEUm8Fq7sklQR4/Z2+gJGXdo/UcfIkoKNsvNlSg1VSf0Tg1e63SbB+5qcSpjfndJZho4vWt5VE8ax4mI71iYn6VV9eKZS3yxnEdZby2KOTgmHYYSj+iDhKsDFIlRPmHa2LjTl9qCuxDyouUb5YJ2fpodHkE2VszP7oU/aOLtaWfrBOe4flru3C7xM+z+AQICAznRjDOCrb8TCx0i2eTa++d4j31yfMI8QkIyNTc5AO2RAem2AA==</SignatureValue>
+    <SignatureValue>CqRzQwCtN1N0TdZXpvMoYEy5vLg0hUlpZ6T1u9C3URvSxkRfGraa+jT1DofPpenPv3vMybTfvK5H0zf3M5HCu2CaQ5vACPpXeYT1djz+kWp6lVxWRJmWKU9RK9aDU//tnqCijwjXhWohTkrs1O21Yx0mdRCPyCHQrZlDHs5MYEQmHm7u8kypy8hm/HAMq7G+RBF9QQD/oAnmBGjDolatJqs9a1VqsBFbcpF8GXw1KAY7eYj2WaQ4T/IYfJpfrT85z13cWBtn+/Bt031xrby1kmQp0TzzSuy7gQ1M/so79psexTpEQXKF4Mvz6+RO1P9W0ej7mBcBq3MrfgxttfWMOQ==</SignatureValue>
     <KeyInfo>
       <X509Data>
         <X509Certificate>MIID0TCCArkCFHxFNGXTrPojQ32rAf8nHkZmLERQMA0GCSqGSIb3DQEBCwUAMIGkMQswCQYDVQQGEwJQWTEQMA4GA1UECAwHQ2VudHJhbDESMBAGA1UEBwwJQXN1bmNpwqJuMScwJQYDVQQKDB5TaG9wcGluZyBDZW50ZXJzIFBhcmFndWF5IFMuQS4xETAPBgNVBAsMCFNob3BwaW5nMQwwCgYDVQQDDANTRFMxJTAjBgkqhkiG9w0BCQEWFnNpc3RlbWFzQGRlbHNvbC5jb20ucHkwHhcNMjIwNTI2MTkyNzUxWhcNMjMwNTI2MTkyNzUxWjCBpDELMAkGA1UEBhMCUFkxEDAOBgNVBAgMB0NlbnRyYWwxEjAQBgNVBAcMCUFzdW5jacKibjEnMCUGA1UECgweU2hvcHBpbmcgQ2VudGVycyBQYXJhZ3VheSBTLkEuMREwDwYDVQQLDAhTaG9wcGluZzEMMAoGA1UEAwwDU0RTMSUwIwYJKoZIhvcNAQkBFhZzaXN0ZW1hc0BkZWxzb2wuY29tLnB5MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAn1aAFfxPCy7M8ZV3AUTjDmTZcxqreFZ9mL2JpaIQXkxpJDXNXuxLQfYVyLyap4+72aWfWvy1y5tWSA/6nBUz4KpmLvlR8M30DUAnl5L7YNVNb6zb65BjB9bEuKNVtmCHs2tTssaZ9wcRbDBj4gSKbrwfLrdL5cSIq8jWyT121CpwtKXjtjDwVUHKO2CoAAiu7VScCBvXXy5REZcAT5002Qsu//ZdO4VdH/stQZTRAmN9TyG8sSJogSjXpV4Z6yo48+5tvJQ0A+Kn6UjWwEPHxCUnY3SeIOzBFSg42bBM4VYyLc39k9B5ZMjOyvxFP16A8akr/arZaKGddI2PoiP8twIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQAu9GHbndR9mzTG/R0sjXUYCOAQ/GVaGbnUVwC2YLUqGO8sbypO3i0OuNmyRKh2sbtDkZNlQT9Cm8zOuJpXmuUNB5ROTQ7E1i7tlyOB+wY0cIJrsA3rL98YWNtN507JVwAXfZh1TtxqZM/GuK+6+zXt7RchTrcrHRaHtp4bwPNV5aLWuDSX4/5sSyNuMGAFllDnFxkFa3oV/kV4MWoVvAT7ynzVJ9XHXn1R3ZT+QKt6bCzCLC1OfrZRRMnzCUFPn83Jd2ECdX0Sj18BEhHGTS7dryoZeWLQ1sRlp/W4QjUb+JZ6A49k9PMhLbln/3V5cA4EHsQqG9Z21rXgF85CEbXt</X509Certificate>
@@ -201,6 +201,6 @@
     </KeyInfo>
   </Signature>
   <gCamFuFD>
-    <dCarQR>https://ekuatia.set.gov.py/consultas-test/qr?nVersion=150&amp;Id=01800090578001001007433122023022217239126317&amp;dFeEmiDE=323032332d30322d32325431313a33393a3435&amp;dRucRec=3197880&amp;dTotGralOpe=511801&amp;dTotIVA=46528&amp;cItems=3&amp;DigestValue=70696b5830584878497a6768774a6f72576c78687050305a5856767a52375844424d39413274397361416b3d&amp;IdCSC=0001&amp;cHashQR=527956632f50e2bfbdc99fdcfda3757ccc9797adbf9740e012fbc580b32841bb</dCarQR>
+    <dCarQR>https://ekuatia.set.gov.py/consultas-test/qr?nVersion=150&amp;Id=01800090578001001007433122023030215630041324&amp;dFeEmiDE=323032332d30332d30325430363a30363a3033&amp;dRucRec=3197880&amp;dTotGralOpe=511801&amp;dTotIVA=46528&amp;cItems=3&amp;DigestValue=4c716c563970503878324d506b78767575455a46395a726e34657a5352354c767768446f463478796b32453d&amp;IdCSC=0001&amp;cHashQR=d77dd844b90e67bbe5b7aa49c06f33edb261c6684a39039386ece0029930944a</dCarQR>
   </gCamFuFD>
 </rDE>

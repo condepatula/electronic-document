@@ -1,6 +1,5 @@
 import {
-  sistemaFacturacion,
-  tipoEmision,
+  /*tipoEmision,*/
   tipoDE,
   tipoTransaccion,
   tipoImpuesto,
@@ -32,7 +31,9 @@ import {
   tipoDocumentoAsociado,
   tipoDocumentoImpreso,
   tipoConstancia,
-} from "./db.js";
+} from "../db.js";
+
+import { getTiposEmisionesDe as tipoEmision } from "../database/index.js";
 
 export const root = {
   /*version: {
@@ -135,7 +136,7 @@ export const root = {
         group: "B",
         id: "B002",
         parent: "B001",
-        value: tipoEmision,
+        value: await tipoEmision(),
         attribute: "codigo",
         description: "Tipo de emisión",
         observation: "1= Normal 2= Contingencia",
@@ -151,7 +152,7 @@ export const root = {
         group: "B",
         id: "B003",
         parent: "B001",
-        value: tipoEmision,
+        value: await tipoEmision(),
         attribute: "descripcion",
         description: "Descripción del tipo de emisión",
         observation: "Referente al campo B002 1= 'Normal' 2= 'Contingencia'",

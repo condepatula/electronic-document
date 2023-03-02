@@ -19,9 +19,9 @@ import {
   generateSecurityCode,
   generateCdc,
   validateDecimal,
-} from "./helpers.js";
-import config from "./config.js";
-import { root } from "./templateJson.js";
+} from "../helpers/index.js";
+import config from "../config.js";
+import { root } from "../de_structure/index.js";
 import {
   getTipoDeByCode,
   getSistemaFacturacionByCode,
@@ -41,7 +41,7 @@ import {
   getFormaAfectacionTributariaIvaByCode,
   getMotivoEmisionNotaCreditoByCode,
   getTipoDocumentoAsociadoByCode,
-} from "./database/index.js";
+} from "../database/index.js";
 
 /**
  * Function: generateXml
@@ -1586,7 +1586,6 @@ export const generateElectronicDocument = (data) => {
                 data.timbrado.numeroDocumento
               );
               if (monedaCu) {
-                //console.log("Moneda cuota");
                 c.moneda = monedaCu.codigo;
                 c.desMoneda = monedaCu.descripcion;
               }
@@ -1708,15 +1707,25 @@ export const generateElectronicDocument = (data) => {
     } catch (err) {
       //console.log(err);
       /**Registra log */
-      err.details.forEach(async (e) => {
+      if (err.hasOwnProperty("details")) {
+        err.details.forEach(async (e) => {
+          payload = {
+            numero: data.timbrado.numeroDocumento,
+            estado: 2,
+            message: e,
+            tipoLog: "error",
+          };
+          await insertLog(payload);
+        });
+      } else {
         payload = {
           numero: data.timbrado.numeroDocumento,
           estado: 2,
-          message: e,
+          message: err,
           tipoLog: "error",
         };
         await insertLog(payload);
-      });
+      }
       /**---------------------- */
       reject(err);
     }

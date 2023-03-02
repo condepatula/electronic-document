@@ -1,4 +1,4 @@
-import { generateElectronicDocument } from "../services.js";
+import { generateElectronicDocument } from "../services/local.js";
 import {
   getTiposImpuestos,
   getTiposTransacciones,
@@ -27,7 +27,7 @@ export const generateDe = async (req, res) => {
     return res.status(500).send({
       success: false,
       message: "",
-      error: err,
+      errors: err,
     });
   }
 };

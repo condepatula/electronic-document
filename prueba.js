@@ -1,4 +1,4 @@
-import builder from "xmlbuilder";
+/*import builder from "xmlbuilder";
 import xml2js from "xml2js";
 import fs from "fs";
 import config from "./config.js";
@@ -43,4 +43,15 @@ parser.parseStringPromise(request).then((res) => {
       }
     );
   });
-});
+});*/
+import { getTiposEmisionesDe as tipoEmision } from "./database/index.js";
+
+let result = {
+  id: 1,
+  campos: await tipoEmision(),
+};
+
+let value = 1;
+let data = result.campos.find((v) => v.codigo === value);
+
+console.log(data);
