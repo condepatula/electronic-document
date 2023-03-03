@@ -2394,6 +2394,38 @@ export const getTiposConstancias = () => {
   });
 };
 
+export const getTiposDocumentosElectronicos = () => {
+  return new Promise(async (resolve, reject) => {
+    console.log(
+      `[${moment(new Date()).format(
+        "DD/MM/YYYY hh:mm:ss.SSSZ"
+      )}]: Obteniendo datos de los tipos de documentos electrónicos.`
+    );
+    pool.query(
+      `SELECT *
+                FROM tipo_de`,
+      (err, res) => {
+        if (err) {
+          reject({
+            origin: "getTiposDocumentosElectronicos",
+            details: `${err}`,
+          });
+        }
+        if (res.rowCount > 0) {
+          resolve(res.rows);
+        } else {
+          reject({
+            origin: "getTiposDocumentosElectronicos",
+            details: new Array(
+              `No se han encontrado datos referentes a los tipos de documentos electrónicos en la tabla tipo_de.`
+            ),
+          });
+        }
+      }
+    );
+  });
+};
+
 export const insertLog = (payload) => {
   return new Promise(async (resolve) => {
     try {
@@ -2524,5 +2556,6 @@ export default {
   getTiposDocumentosImpresos,
   getTipoConstanciaByCode,
   getTiposConstancias,
+  getTiposDocumentosElectronicos,
   insertLog,
 };

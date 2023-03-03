@@ -1,39 +1,104 @@
-import {
-  /*tipoEmision,*/
-  tipoDE,
-  tipoTransaccion,
-  tipoImpuesto,
-  moneda,
-  condicionTipoCambio,
-  condicionAnticipo,
-  tipoContribuyente,
-  tipoRegimen,
-  pais,
-  departamento,
-  distrito,
-  ciudad,
-  tipoDocumentoIdentidad,
-  naturalezaReceptor,
-  tipoOperacion,
-  tipoIndicadorPresencia,
-  naturalezaVendedor,
-  motivoEmisionNotaCredito,
-  motivoEmisionNotaRemision,
-  responsableNotaRemision,
-  condicionOperacion,
-  tipoPago,
-  denominacionTarjeta,
-  formaProcesamientoPago,
-  condicionCredito,
-  unidadMedida,
-  relevanciaMercaderia,
-  formaAfectacionTributariaIva,
-  tipoDocumentoAsociado,
-  tipoDocumentoImpreso,
-  tipoConstancia,
-} from "../db.js";
+//import //tipoEmision,
+//tipoDE,
+//tipoTransaccion,
+//tipoImpuesto,
+//moneda,
+//condicionTipoCambio,
+//condicionAnticipo,
+//tipoContribuyente,
+//tipoRegimen,
+//pais,
+//departamento,
+//distrito,
+//ciudad,
+//tipoDocumentoIdentidad,
+//naturalezaReceptor,
+//tipoOperacion,
+//tipoIndicadorPresencia,
+//naturalezaVendedor,
+//motivoEmisionNotaCredito,
+//motivoEmisionNotaRemision,
+//responsableNotaRemision,
+//condicionOperacion,
+//tipoPago,
+//denominacionTarjeta,
+//formaProcesamientoPago,
+//condicionCredito,
+//unidadMedida,
+//relevanciaMercaderia,
+//formaAfectacionTributariaIva,
+//tipoDocumentoAsociado,
+//tipoDocumentoImpreso,
+//tipoConstancia,
+//"../db.js";
 
-import { getTiposEmisionesDe as tipoEmision } from "../database/index.js";
+import {
+  getTiposEmisionesDe,
+  getTiposDocumentosElectronicos,
+  getTiposTransacciones,
+  getTiposImpuestos,
+  getMonedas,
+  getCondicionesTiposCambios,
+  getCondicionesAnticipos,
+  getTiposContribuyentes,
+  getTiposRegimenes,
+  getPaises,
+  getDepartamentos,
+  getDistritos,
+  getCiudades,
+  getTiposDocumentosIdentidad,
+  getNaturalezasReceptor,
+  getTiposOperaciones,
+  getTiposIndicadoresPresencia,
+  getNaturalezasVendedor,
+  getMotivosEmisionNotaCredito,
+  getMotivosEmisionNotaRemision,
+  getResponsablesNotaRemision,
+  getCondicionesOperacion,
+  getTiposPago,
+  getDenominacionesTarjetas,
+  getFormasProcesamientosPagos,
+  getCondicionesCreditos,
+  getUnidadesMedida,
+  getRelevanciasMercaderia,
+  getFormasAfectacionTributariaIva,
+  getTiposDocumentosAsociados,
+  getTiposDocumentosImpresos,
+  getTiposConstancias,
+} from "../database/index.js";
+
+const tipoEmision = await getTiposEmisionesDe();
+const tipoDE = await getTiposDocumentosElectronicos();
+const tipoTransaccion = await getTiposTransacciones();
+const tipoImpuesto = await getTiposImpuestos();
+const moneda = await getMonedas();
+const condicionTipoCambio = await getCondicionesTiposCambios();
+const condicionAnticipo = await getCondicionesAnticipos();
+const tipoContribuyente = await getTiposContribuyentes();
+const tipoRegimen = await getTiposRegimenes();
+const pais = await getPaises();
+const departamento = await getDepartamentos();
+const distrito = await getDistritos();
+const ciudad = await getCiudades();
+const tipoDocumentoIdentidad = await getTiposDocumentosIdentidad();
+const naturalezaReceptor = await getNaturalezasReceptor();
+const tipoOperacion = await getTiposOperaciones();
+const tipoIndicadorPresencia = await getTiposIndicadoresPresencia();
+const naturalezaVendedor = await getNaturalezasVendedor();
+const motivoEmisionNotaCredito = await getMotivosEmisionNotaCredito();
+const motivoEmisionNotaRemision = await getMotivosEmisionNotaRemision();
+const responsableNotaRemision = await getResponsablesNotaRemision();
+const condicionOperacion = await getCondicionesOperacion();
+const tipoPago = await getTiposPago();
+const denominacionTarjeta = await getDenominacionesTarjetas();
+const formaProcesamientoPago = await getFormasProcesamientosPagos();
+const condicionCredito = await getCondicionesCreditos();
+const unidadMedida = await getUnidadesMedida();
+const relevanciaMercaderia = await getRelevanciasMercaderia();
+const formaAfectacionTributariaIva = await getFormasAfectacionTributariaIva();
+const tipoDocumentoAsociado = await getTiposDocumentosAsociados();
+const tipoDocumentoImpreso = await getTiposDocumentosImpresos();
+const tipoConstancia = await getTiposConstancias();
 
 export const root = {
   /*version: {
@@ -136,7 +201,7 @@ export const root = {
         group: "B",
         id: "B002",
         parent: "B001",
-        value: await tipoEmision(),
+        value: tipoEmision,
         attribute: "codigo",
         description: "Tipo de emisión",
         observation: "1= Normal 2= Contingencia",
@@ -152,7 +217,7 @@ export const root = {
         group: "B",
         id: "B003",
         parent: "B001",
-        value: await tipoEmision(),
+        value: tipoEmision,
         attribute: "descripcion",
         description: "Descripción del tipo de emisión",
         observation: "Referente al campo B002 1= 'Normal' 2= 'Contingencia'",
