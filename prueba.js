@@ -44,14 +44,8 @@ parser.parseStringPromise(request).then((res) => {
     );
   });
 });*/
-import { getTiposEmisionesDe as tipoEmision } from "./database/index.js";
 
-let result = {
-  id: 1,
-  campos: await tipoEmision(),
-};
+import { generateXmlToSend } from "./services/sifen.js";
 
-let value = 1;
-let data = result.campos.find((v) => v.codigo === value);
-
-console.log(data);
+const result = await generateXmlToSend("0074331.xml");
+console.log(result);
