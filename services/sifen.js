@@ -1,9 +1,45 @@
 import builder from "xmlbuilder";
 import xml2js from "xml2js";
 import fs from "fs";
+import https from "https";
+import axios from "axios";
+import { XMLParser } from "fast-xml-parser";
 import config from "../config.js";
+import helper from "../helpers/index.js";
+import { registerSendingElectronicDocument } from "../database/index.js";
 
-export const generateXmlToSend = (fileName) => {
+const enviarDocumentoElectronico = (fileName) => {
+  return new Promise(async (resolve, reject) => {
+    const id = 1; //await registerSendingElectronicDocument({ idDe: 87 });
+    const xml = await generateXmlToSend(id, fileName);
+    const httpsAgent = new https.Agent({
+      cert: fs.readFileSync(new URL(`../cert/sds_public.pem`, import.meta.url)),
+      key: helper.readPrivateKeyFromProtectedPem("sds.pem", config.passphrase),
+      //ca: fs.readFileSync("ca.crt"),
+    });
+    try {
+      const response = await axios.post(
+        config.url_recibe,
+        helper.formatXml(xml),
+        {
+          httpsAgent,
+        }
+      );
+
+      resolve({
+        success: true,
+        message: response.data.search("<html>").index < 0 ? response.data : "",
+      });
+    } catch (err) {
+      reject({
+        success: false,
+        message: err,
+      });
+    }
+  });
+};
+
+const generateXmlToSend = (id, fileName) => {
   return new Promise((resolve, reject) => {
     let envelope = builder
       .create("soap:Envelope")
@@ -13,7 +49,7 @@ export const generateXmlToSend = (fileName) => {
     let rEnviDe = body.e("rEnviDe", {
       xmlns: "http://ekuatia.set.gov.py/sifen/xsd",
     });
-    rEnviDe.e("dId", 10000011111111);
+    rEnviDe.e("dId", id);
     rEnviDe.e("xDE");
     let request = envelope.end({ pretty: true });
     let xmlPath = `${config.paths.xmlSigned.invoices}/${fileName}`;
@@ -47,4 +83,28 @@ export const generateXmlToSend = (fileName) => {
   });
 };
 
-export default { generateXmlToSend };
+export const responseXmlToJson = (xml) => {
+  const parser = new XMLParser();
+  const json =
+    parser.parse(xml)["soap:Envelope"]["soap:body"]["ns2:rRetEnviDe"][
+      "ns2:rProtDe"
+    ];
+  let result = {
+    id: json["ns2:dId"],
+    fechaProceso: json["ns2:dFecProc"],
+    digestValue: json["ns2:dDigVal"],
+    estado: json["ns2:dEstRes"],
+    nroTransaccion: json["ns2:dProtAut"],
+  };
+  let mensajes = [];
+  json["ns2:gResProc"].forEach((e) => {
+    mensajes.push({
+      codigo: e["ns2:dCodRes"],
+      mensaje: e["ns2:dMsgRes"],
+    });
+  });
+  result = { ...result, mensajes };
+  return result;
+};
+
+export default { responseXmlToJson, enviarDocumentoElectronico };

@@ -5,6 +5,16 @@ const env = process.env.NODE_ENV;
 
 const development = {
   url_consulta_qr: "https://ekuatia.set.gov.py/consultas-test/qr?",
+  url_recibe: "https://sifen-test.set.gov.py/de/ws/sync/recibe.wsd?wsdl",
+  url_recibe_lote:
+    "https://sifen-test.set.gov.py/de/ws/async/recibe-lote.wsdl?wsdl",
+  url_evento: "https://sifen-test.set.gov.py/de/ws/eventos/evento.wsdl?wsdl",
+  url_consulta:
+    "https://sifen-test.set.gov.py/de/ws/consultas/consulta.wsdl?wsdl",
+  url_consulta_lote:
+    "https://sifen-test.set.gov.py/de/ws/consultas/consulta-lote.wsdl?wsdl",
+  url_consulta_ruc:
+    "https://sifen-test.set.gov.py/de/ws/consultas/consulta-ruc.wsdl?wsdl",
   csc: process.env.CSC,
   cert: process.env.CERT,
   key: process.env.KEY,
@@ -42,6 +52,14 @@ const development = {
 
 const production = {
   url_consulta_qr: "https://ekuatia.set.gov.py/consultas/qr?",
+  url_recibe: "https://sifen.set.gov.py/de/ws/sync/recibe.wsdl?wsdl",
+  url_recibe_lote: "https://sifen.set.gov.py/de/ws/async/recibe-lote.wsdl?wsdl",
+  url_evento: "https://sifen.set.gov.py/de/ws/eventos/evento.wsdl?wsdl",
+  url_consulta: "https://sifen.set.gov.py/de/ws/consultas/consulta.wsdl?wsdl",
+  url_consulta_lote:
+    "https://sifen.set.gov.py/de/ws/consultas/consulta-lote.wsdl?wsdl",
+  url_consulta_ruc:
+    "https://sifen.set.gov.py/de/ws/consultas/consulta-ruc.wsdl?wsdl",
   csc: process.env.CSC,
   cert: process.env.CERT,
   key: process.env.KEY,

@@ -2491,6 +2491,24 @@ export const insertLog = (payload) => {
   });
 };
 
+export const registerSendingElectronicDocument = (payload) => {
+  return new Promise(async (resolve) => {
+    try {
+      const { idDe, fechaEnvio = new Date() } = payload;
+      const envioDeSingle = await pool.query(
+        "INSERT INTO envio_de_single(id_de,fecha_envio) VALUES($1,$2) RETURNING *",
+        [idDe, fechaEnvio]
+      );
+      resolve(envioDeSingle.rows[0].id);
+    } catch (err) {
+      console.error({
+        origin: "registerSendingElectronicDocument",
+        message: err,
+      });
+    }
+  });
+};
+
 export default {
   getTipoDeByCode,
   getSistemaFacturacionByCode,
@@ -2558,4 +2576,5 @@ export default {
   getTiposConstancias,
   getTiposDocumentosElectronicos,
   insertLog,
+  registerSendingElectronicDocument,
 };
