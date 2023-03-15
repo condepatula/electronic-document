@@ -2436,14 +2436,15 @@ export const insertLog = (payload) => {
         message,
         tipoLog,
         cdc = null,
+        archivoXml = null,
       } = payload;
       const existDe = await pool.query(`SELECT * FROM de a WHERE a.numero=$1`, [
         numero,
       ]);
       if (existDe.rowCount === 0) {
         const de = await pool.query(
-          "INSERT INTO de(fecha,tipo_de,numero) VALUES($1,$2,$3) RETURNING *",
-          [new Date(), tipoDe, numero]
+          "INSERT INTO de(fecha,tipo_de,numero,archivo) VALUES($1,$2,$3,$4) RETURNING *",
+          [new Date(), tipoDe, numero, archivoXml]
         );
         if (de.rowCount > 0) {
           if (estado) {
@@ -2476,6 +2477,12 @@ export const insertLog = (payload) => {
             existDe.rows[0].id,
           ]);
         }
+        if (archivoXml) {
+          await pool.query(`UPDATE de SET archivo=$1 WHERE id=$2`, [
+            archivoXml,
+            existDe.rows[0].id,
+          ]);
+        }
         await pool.query(
           `INSERT INTO log_de(fecha,de,tipo,mensaje) VALUES($1,$2,$3,$4)`,
           [new Date(), existDe.rows[0].id, tipoLog, message]
@@ -2503,6 +2510,24 @@ export const registerSendingElectronicDocument = (payload) => {
     } catch (err) {
       console.error({
         origin: "registerSendingElectronicDocument",
+        message: err,
+      });
+    }
+  });
+};
+
+export const recordElectronicDocumentDeliveryResponse = (payload) => {
+  return new Promise(async (resolve) => {
+    try {
+      const { idEnvio, codigoRespuesta } = payload;
+      await pool.query(
+        "INSERT INTO envio_de_single_res(id_envio,codigo_respuesta) VALUES($1,$2) RETURNING *",
+        [idEnvio, codigoRespuesta]
+      );
+      resolve();
+    } catch (err) {
+      console.error({
+        origin: "recordElectronicDocumentDeliveryResponse",
         message: err,
       });
     }
@@ -2577,4 +2602,5 @@ export default {
   getTiposDocumentosElectronicos,
   insertLog,
   registerSendingElectronicDocument,
+  recordElectronicDocumentDeliveryResponse,
 };

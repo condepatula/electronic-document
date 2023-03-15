@@ -6,11 +6,14 @@ import axios from "axios";
 import { XMLParser } from "fast-xml-parser";
 import config from "../config.js";
 import helper from "../helpers/index.js";
-import { registerSendingElectronicDocument } from "../database/index.js";
+import {
+  registerSendingElectronicDocument,
+  recordElectronicDocumentDeliveryResponse,
+} from "../database/index.js";
 
-const enviarDocumentoElectronico = (fileName) => {
+const enviarDocumentoElectronico = (idDe, fileName) => {
   return new Promise(async (resolve, reject) => {
-    const id = 1; //await registerSendingElectronicDocument({ idDe: 87 });
+    const id = await registerSendingElectronicDocument({ idDe });
     const xml = await generateXmlToSend(id, fileName);
     const httpsAgent = new https.Agent({
       cert: fs.readFileSync(new URL(`../cert/sds_public.pem`, import.meta.url)),
@@ -25,10 +28,21 @@ const enviarDocumentoElectronico = (fileName) => {
           httpsAgent,
         }
       );
-
+      if (response.data.search("<html>").index < 0) {
+        let jsonResponse = responseXmlToJson(response.data);
+        jsonResponse.mensajes.forEach(async (e) => {
+          await recordElectronicDocumentDeliveryResponse({
+            idEnvio: id,
+            codigoRespuesta: e.codigo,
+          });
+        });
+      }
       resolve({
         success: true,
-        message: response.data.search("<html>").index < 0 ? response.data : "",
+        message:
+          response.data.search("<html>").index < 0
+            ? responseXmlToJson(response.data)
+            : "",
       });
     } catch (err) {
       reject({

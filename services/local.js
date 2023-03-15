@@ -53,6 +53,15 @@ export const generateXml = (data, { version, cdc, fecha, codigoSeguridad }) => {
   return new Promise(async (resolve, reject) => {
     /**Registra log */
     const logMessage = `Generando XML.`;
+    //Factura electrónica
+    let pathXml = "";
+    if (data.timbrado.tipoDE === 1) {
+      pathXml = `${config.paths.xml.invoices}/${cdc}.xml`;
+    }
+    //Nota de crédito electrónica
+    if (data.timbrado.tipoDE === 5) {
+      pathXml = `${config.paths.xml.creditNotes}/${cdc}.xml`;
+    }
     console.log(
       `[${moment(new Date()).format(
         "DD/MM/YYYY hh:mm:ss.SSSZ"
@@ -62,12 +71,17 @@ export const generateXml = (data, { version, cdc, fecha, codigoSeguridad }) => {
       numero: data.timbrado.numeroDocumento,
       message: logMessage,
       tipoLog: "info",
+      archivoXml: `${cdc}.xml`,
     };
     await insertLog(payload);
     /**---------------------- */
     /**AA. Campos que identifican el formato electrónico XML (AA001-AA009)*/
     let rDE = builder
-      .create("rDE")
+      .create("rDE", {
+        version: "1.0",
+        encoding: "UTF-8",
+        standalone: undefined,
+      })
       .att("xmlns", "http://ekuatia.set.gov.py/sifen/xsd")
       .att("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
       .att(
@@ -826,15 +840,6 @@ export const generateXml = (data, { version, cdc, fecha, codigoSeguridad }) => {
         }
       });
     }
-    //Factura electrónica
-    let pathXml = "";
-    if (data.timbrado.tipoDE === 1) {
-      pathXml = `${config.paths.xml.invoices}/${data.timbrado.numeroDocumento}.xml`;
-    }
-    //Nota de crédito electrónica
-    if (data.timbrado.tipoDE === 5) {
-      pathXml = `${config.paths.xml.creditNotes}/${data.timbrado.numeroDocumento}.xml`;
-    }
     fs.writeFile(pathXml, rDE.end({ pretty: true }), (err) => {
       if (err)
         reject({
@@ -1085,7 +1090,13 @@ export const addUrlQrToXml = (xmlName, documentType, url) => {
               },
             },
           };
-          const builder = new xml2js.Builder();
+          const builder = new xml2js.Builder({
+            xmldec: {
+              version: "1.0",
+              encoding: "UTF-8",
+              standalone: undefined,
+            },
+          });
           const _xml = builder.buildObject(obj);
           fs.writeFile(xmlPath, _xml, (err) => {
             if (err)
@@ -1120,7 +1131,7 @@ export const addUrlQrToXml = (xmlName, documentType, url) => {
  * @param {json} data
  * @param {string} qr
  */
-export const generateKude = (data, qr) => {
+export const generateKude = (data, qr, cdc) => {
   return new Promise(async (resolve, reject) => {
     /**Registra log */
     const logMessage = `Generando Kude.`;
@@ -1183,18 +1194,12 @@ export const generateKude = (data, qr) => {
       let templateName = "";
       //Factura electrónica
       if (data.timbrado.tipoDE === 1) {
-        pathKude = path.join(
-          config.paths.kude.invoices,
-          `${data.timbrado.numeroDocumento}.pdf`
-        );
+        pathKude = path.join(config.paths.kude.invoices, `${cdc}.pdf`);
         templateName = `${config.paths.templates.invoice}`;
       }
       //Nota de crédito electrónica
       if (data.timbrado.tipoDE === 5) {
-        pathKude = path.join(
-          config.paths.kude.creditNotes,
-          `${data.timbrado.numeroDocumento}.pdf`
-        );
+        pathKude = path.join(config.paths.kude.creditNotes, `${cdc}.pdf`);
         templateName = `${config.paths.templates.creditNote}`;
       }
       for (let i = 1; i <= pages; i++) {
@@ -1642,7 +1647,7 @@ export const generateElectronicDocument = (data) => {
       /**Inserta firma digital al xml */
       await signXml(
         data,
-        `${data.timbrado.numeroDocumento}.xml`,
+        `${cdc}.xml`,
         config.cert,
         config.key,
         config.passphrase,
@@ -1651,19 +1656,15 @@ export const generateElectronicDocument = (data) => {
       /**Genera url del QR */
       const urlQr = await generateUrlForQr(
         data,
-        `${data.timbrado.numeroDocumento}.xml`,
+        `${cdc}.xml`,
         data.timbrado.tipoDE
       );
       /**Inserta url del QR al xml firmado */
-      await addUrlQrToXml(
-        `${data.timbrado.numeroDocumento}.xml`,
-        data.timbrado.tipoDE,
-        urlQr
-      );
+      await addUrlQrToXml(`${cdc}.xml`, data.timbrado.tipoDE, urlQr);
       /**Genera código QR */
       const qr = await generateQr(data, urlQr);
       /**Genera Kude */
-      await generateKude(data, qr);
+      await generateKude(data, qr, cdc);
       /**Registra log */
       logMessage = `Documento electrónico generado exitosamente.`;
       console.log(
@@ -1683,17 +1684,11 @@ export const generateElectronicDocument = (data) => {
       let pathKude = "";
       /**Factura electrónica */
       if (data.timbrado.tipoDE === 1) {
-        pathKude = path.join(
-          config.paths.kude.invoices,
-          `${data.timbrado.numeroDocumento}.pdf`
-        );
+        pathKude = path.join(config.paths.kude.invoices, `${cdc}.pdf`);
       }
       /**Nota de crédito electrónica */
       if (data.timbrado.tipoDE === 5) {
-        pathKude = path.join(
-          config.paths.kude.creditNotes,
-          `${data.timbrado.numeroDocumento}.pdf`
-        );
+        pathKude = path.join(config.paths.kude.creditNotes, `${cdc}.pdf`);
       }
       await sendEmail(
         data,
