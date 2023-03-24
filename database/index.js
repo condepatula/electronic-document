@@ -12,7 +12,7 @@ const pool = new Pool({
   port: config.databasePort,
 });
 
-export const getTipoDeByCode = (codigo, numeroDocumentoDe) => {
+export const getTipoDeByCode = (idDe, codigo) => {
   return new Promise(async (resolve, reject) => {
     let param;
     if (typeof codigo === "number") {
@@ -27,8 +27,13 @@ export const getTipoDeByCode = (codigo, numeroDocumentoDe) => {
         "DD/MM/YYYY hh:mm:ss.SSSZ"
       )}]: ${logMessage}`
     );
-    let payload = {
+    /*let payload = {
       numero: numeroDocumentoDe,
+      message: logMessage,
+      tipoLog: "info",
+    };*/
+    let payload = {
+      idDe: idDe,
       message: logMessage,
       tipoLog: "info",
     };
@@ -60,7 +65,7 @@ export const getTipoDeByCode = (codigo, numeroDocumentoDe) => {
   });
 };
 
-export const getSistemaFacturacionByCode = (numeroDocumentoDe) => {
+export const getSistemaFacturacionByCode = (idDe) => {
   return new Promise(async (resolve, reject) => {
     /**Registra log */
     const logMessage = `Obteniendo datos del sistema de facturación.`;
@@ -70,7 +75,7 @@ export const getSistemaFacturacionByCode = (numeroDocumentoDe) => {
       )}]: ${logMessage}`
     );
     let payload = {
-      numero: numeroDocumentoDe,
+      idDe: idDe,
       message: logMessage,
       tipoLog: "info",
     };
@@ -99,7 +104,7 @@ export const getSistemaFacturacionByCode = (numeroDocumentoDe) => {
   });
 };
 
-export const getTipoEmisionDeByCode = (codigo, numeroDocumentoDe) => {
+export const getTipoEmisionDeByCode = (codigo, idDe) => {
   return new Promise(async (resolve, reject) => {
     /**Registra log */
     const logMessage = `Obteniendo datos del tipo de emisión del documento electrónico.`;
@@ -109,7 +114,7 @@ export const getTipoEmisionDeByCode = (codigo, numeroDocumentoDe) => {
       )}]: ${logMessage}`
     );
     let payload = {
-      numero: numeroDocumentoDe,
+      idDe: idDe,
       message: logMessage,
       tipoLog: "info",
     };
@@ -168,7 +173,7 @@ export const getTiposEmisionesDe = () => {
   });
 };
 
-export const getTipoTransaccionByCode = (codigo, numeroDocumentoDe) => {
+export const getTipoTransaccionByCode = (codigo, idDe) => {
   return new Promise(async (resolve, reject) => {
     /**Registra log */
     const logMessage = `Obteniendo el tipo de transacción.`;
@@ -178,7 +183,7 @@ export const getTipoTransaccionByCode = (codigo, numeroDocumentoDe) => {
       )}]: ${logMessage}`
     );
     let payload = {
-      numero: numeroDocumentoDe,
+      idDe: idDe,
       message: logMessage,
       tipoLog: "info",
     };
@@ -237,7 +242,7 @@ export const getTiposTransacciones = () => {
   });
 };
 
-export const getTipoImpuestoByCode = (codigo, numeroDocumentoDe) => {
+export const getTipoImpuestoByCode = (codigo, idDe) => {
   return new Promise(async (resolve, reject) => {
     /**Registra log */
     const logMessage = `Obteniendo datos del tipo de impuesto.`;
@@ -247,7 +252,7 @@ export const getTipoImpuestoByCode = (codigo, numeroDocumentoDe) => {
       )}]: ${logMessage}`
     );
     let payload = {
-      numero: numeroDocumentoDe,
+      idDe: idDe,
       message: logMessage,
       tipoLog: "info",
     };
@@ -306,7 +311,7 @@ export const getTiposImpuestos = () => {
   });
 };
 
-export const getMonedaByCode = (codigo, numeroDocumentoDe) => {
+export const getMonedaByCode = (codigo, idDe) => {
   return new Promise(async (resolve, reject) => {
     let param;
     if (typeof codigo === "number") {
@@ -322,7 +327,7 @@ export const getMonedaByCode = (codigo, numeroDocumentoDe) => {
       )}]: ${logMessage}`
     );
     let payload = {
-      numero: numeroDocumentoDe,
+      idDe: idDe,
       message: logMessage,
       tipoLog: "info",
     };
@@ -657,7 +662,7 @@ export const getTiposRegimenes = () => {
   });
 };
 
-export const getDepartamentoByCode = (codigo, numeroDocumentoDe) => {
+export const getDepartamentoByCode = (codigo, idDe) => {
   return new Promise(async (resolve, reject) => {
     let param;
     if (typeof codigo === "number") {
@@ -673,7 +678,7 @@ export const getDepartamentoByCode = (codigo, numeroDocumentoDe) => {
       )}]: ${logMessage}`
     );
     let payload = {
-      numero: numeroDocumentoDe,
+      idDe: idDe,
       message: logMessage,
       tipoLog: "info",
     };
@@ -732,7 +737,7 @@ export const getDepartamentos = () => {
   });
 };
 
-export const getDistritoByCode = (codigo, numeroDocumentoDe) => {
+export const getDistritoByCode = (codigo, idDe) => {
   return new Promise(async (resolve, reject) => {
     let param;
     if (typeof codigo === "number") {
@@ -748,7 +753,7 @@ export const getDistritoByCode = (codigo, numeroDocumentoDe) => {
       )}]: ${logMessage}`
     );
     let payload = {
-      numero: numeroDocumentoDe,
+      idDe: idDe,
       message: logMessage,
       tipoLog: "info",
     };
@@ -807,7 +812,7 @@ export const getDistritos = () => {
   });
 };
 
-export const getCiudadByCode = (codigo, numeroDocumentoDe) => {
+export const getCiudadByCode = (codigo, idDe) => {
   return new Promise(async (resolve, reject) => {
     let param;
     if (typeof codigo === "number") {
@@ -823,7 +828,7 @@ export const getCiudadByCode = (codigo, numeroDocumentoDe) => {
       )}]: ${logMessage}`
     );
     let payload = {
-      numero: numeroDocumentoDe,
+      idDe: idDe,
       message: logMessage,
       tipoLog: "info",
     };
@@ -1092,7 +1097,7 @@ export const getTiposOperaciones = () => {
   });
 };
 
-export const getPaisByCode = (codigo, numeroDocumentoDe) => {
+export const getPaisByCode = (codigo, idDe) => {
   return new Promise(async (resolve, reject) => {
     let param;
     if (typeof codigo === "number") {
@@ -1108,7 +1113,7 @@ export const getPaisByCode = (codigo, numeroDocumentoDe) => {
       )}]: ${logMessage}`
     );
     let payload = {
-      numero: numeroDocumentoDe,
+      idDe: idDe,
       message: logMessage,
       tipoLog: "info",
     };
@@ -1167,7 +1172,7 @@ export const getPaises = () => {
   });
 };
 
-export const getTipoIndicadorPresenciaByCode = (codigo, numeroDocumentoDe) => {
+export const getTipoIndicadorPresenciaByCode = (codigo, idDe) => {
   return new Promise(async (resolve, reject) => {
     /**Registra log */
     const logMessage = `Obteniendo datos del tipo de indicador de presencia.`;
@@ -1177,7 +1182,7 @@ export const getTipoIndicadorPresenciaByCode = (codigo, numeroDocumentoDe) => {
       )}]: ${logMessage}`
     );
     let payload = {
-      numero: numeroDocumentoDe,
+      idDe: idDe,
       message: logMessage,
       tipoLog: "info",
     };
@@ -1311,10 +1316,7 @@ export const getNaturalezasVendedor = () => {
   });
 };
 
-export const getMotivoEmisionNotaCreditoByCode = (
-  codigo,
-  numeroDocumentoDe
-) => {
+export const getMotivoEmisionNotaCreditoByCode = (codigo, idDe) => {
   return new Promise(async (resolve, reject) => {
     let param;
     if (typeof codigo === "number") {
@@ -1330,7 +1332,7 @@ export const getMotivoEmisionNotaCreditoByCode = (
       )}]: ${logMessage}`
     );
     let payload = {
-      numero: numeroDocumentoDe,
+      idDe: idDe,
       message: logMessage,
       tipoLog: "info",
     };
@@ -1551,7 +1553,7 @@ export const getResponsablesNotaRemision = () => {
   });
 };
 
-export const getCondicionOperacionByCode = (codigo, numeroDocumentoDe) => {
+export const getCondicionOperacionByCode = (codigo, idDe) => {
   return new Promise(async (resolve, reject) => {
     let param;
     if (typeof codigo === "number") {
@@ -1567,7 +1569,7 @@ export const getCondicionOperacionByCode = (codigo, numeroDocumentoDe) => {
       )}]: ${logMessage}`
     );
     let payload = {
-      numero: numeroDocumentoDe,
+      idDe: idDe,
       message: logMessage,
       tipoLog: "info",
     };
@@ -1869,7 +1871,7 @@ export const getFormasProcesamientosPagos = () => {
   });
 };
 
-export const getCondicionCreditoByCode = (codigo, numeroDocumentoDe) => {
+export const getCondicionCreditoByCode = (codigo, idDe) => {
   return new Promise(async (resolve, reject) => {
     /**Registra log */
     const logMessage = `Obteniendo datos de la condición de crédito.`;
@@ -1879,7 +1881,7 @@ export const getCondicionCreditoByCode = (codigo, numeroDocumentoDe) => {
       )}]: ${logMessage}`
     );
     let payload = {
-      numero: numeroDocumentoDe,
+      idDe: idDe,
       message: logMessage,
       tipoLog: "info",
     };
@@ -1944,7 +1946,7 @@ export const getCondicionesCreditos = () => {
   });
 };
 
-export const getUnidadMedidaByCode = (codigo, numeroDocumentoDe) => {
+export const getUnidadMedidaByCode = (codigo, idDe) => {
   return new Promise(async (resolve, reject) => {
     let param;
     if (typeof codigo === "number") {
@@ -1960,7 +1962,7 @@ export const getUnidadMedidaByCode = (codigo, numeroDocumentoDe) => {
       )}]: ${logMessage}`
     );
     let payload = {
-      numero: numeroDocumentoDe,
+      idDe: idDe,
       message: logMessage,
       tipoLog: "info",
     };
@@ -2091,10 +2093,7 @@ export const getRelevanciasMercaderia = () => {
   });
 };
 
-export const getFormaAfectacionTributariaIvaByCode = (
-  codigo,
-  numeroDocumentoDe
-) => {
+export const getFormaAfectacionTributariaIvaByCode = (codigo, idDe) => {
   return new Promise(async (resolve, reject) => {
     /**Registra log */
     const logMessage = `Obteniendo datos de la forma de la afectación tributaria del IVA.`;
@@ -2104,7 +2103,7 @@ export const getFormaAfectacionTributariaIvaByCode = (
       )}]: ${logMessage}`
     );
     let payload = {
-      numero: numeroDocumentoDe,
+      idDe: idDe,
       message: logMessage,
       tipoLog: "info",
     };
@@ -2169,7 +2168,7 @@ export const getFormasAfectacionTributariaIva = () => {
   });
 };
 
-export const getTipoDocumentoAsociadoByCode = (codigo, numeroDocumentoDe) => {
+export const getTipoDocumentoAsociadoByCode = (codigo, idDe) => {
   return new Promise(async (resolve, reject) => {
     /**Registra log */
     const logMessage = `Obteniendo datos del tipo de documento asociado.`;
@@ -2179,7 +2178,7 @@ export const getTipoDocumentoAsociadoByCode = (codigo, numeroDocumentoDe) => {
       )}]: ${logMessage}`
     );
     let payload = {
-      numero: numeroDocumentoDe,
+      idDe: idDe,
       message: logMessage,
       tipoLog: "info",
     };
@@ -2426,7 +2425,7 @@ export const getTiposDocumentosElectronicos = () => {
   });
 };
 
-export const insertLog = (payload) => {
+/*export const insertLog = (payload) => {
   return new Promise(async (resolve) => {
     try {
       const {
@@ -2494,6 +2493,75 @@ export const insertLog = (payload) => {
         origin: "insertLog",
         details: new Array(err),
       });
+    }
+  });
+};*/
+
+export const insertLog = (payload) => {
+  return new Promise(async (resolve) => {
+    try {
+      const { idDe, message, tipoLog } = payload;
+      if (idDe) {
+        await pool.query(
+          `INSERT INTO log_de(fecha,de,tipo,mensaje) VALUES($1,$2,$3,$4)`,
+          [new Date(), idDe, tipoLog, message]
+        );
+      }
+      resolve();
+    } catch (err) {
+      console.error({
+        origin: "insertLog",
+        details: new Array(err),
+      });
+    }
+  });
+};
+
+export const insertDe = (ruc, numero, nombreReceptor) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await insertCliente(ruc, nombreReceptor);
+      const de = await pool.query(
+        "INSERT INTO de(fecha,numero,ruc) VALUES($1,$2,$3) RETURNING *",
+        [new Date(), numero, ruc]
+      );
+      resolve(de.rows[0].id);
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
+export const insertCliente = (ruc, nombre) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const cliente = await pool.query(
+        `SELECT * FROM cliente a WHERE a.ruc=$1`,
+        [ruc]
+      );
+      if (cliente.rowCount === 0) {
+        await pool.query("INSERT INTO cliente(ruc,nombre) VALUES($1,$2)", [
+          ruc,
+          nombre,
+        ]);
+      }
+      resolve();
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
+export const updateDe = (idDe, tipoDe, estado, cdc) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await pool.query(
+        `UPDATE de SET tipo_de=$1, estado=$2, cdc=$3, archivo=$4 WHERE id=$5`,
+        [tipoDe, estado, cdc, `${cdc}.xml`, idDe]
+      );
+      resolve();
+    } catch (error) {
+      reject(error);
     }
   });
 };
@@ -2603,4 +2671,6 @@ export default {
   insertLog,
   registerSendingElectronicDocument,
   recordElectronicDocumentDeliveryResponse,
+  insertDe,
+  updateDe,
 };

@@ -41,6 +41,8 @@ import {
   getFormaAfectacionTributariaIvaByCode,
   getMotivoEmisionNotaCreditoByCode,
   getTipoDocumentoAsociadoByCode,
+  insertDe,
+  updateDe,
 } from "../database/index.js";
 
 /**
@@ -49,7 +51,11 @@ import {
  * @param {json} data
  * @returns {promises}
  */
-export const generateXml = (data, { version, cdc, fecha, codigoSeguridad }) => {
+export const generateXml = (
+  idDe,
+  data,
+  { version, cdc, fecha, codigoSeguridad }
+) => {
   return new Promise(async (resolve, reject) => {
     /**Registra log */
     const logMessage = `Generando XML.`;
@@ -68,10 +74,9 @@ export const generateXml = (data, { version, cdc, fecha, codigoSeguridad }) => {
       )}]: ${logMessage}`
     );
     let payload = {
-      numero: data.timbrado.numeroDocumento,
+      idDe: idDe,
       message: logMessage,
       tipoLog: "info",
-      archivoXml: `${cdc}.xml`,
     };
     await insertLog(payload);
     /**---------------------- */
@@ -86,7 +91,7 @@ export const generateXml = (data, { version, cdc, fecha, codigoSeguridad }) => {
       .att("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
       .att(
         "xsi:schemaLocation",
-        "https://ekuatia.set.gov.py/sifen/xsd/siRecepDE_v150.xsd"
+        "http://ekuatia.set.gov.py/sifen/xsd siRecepDE_v150.xsd"
       );
     rDE.e("dVerFor", version);
     /**A. Campos firmados del Documento Electrónico (A001-A099)*/
@@ -860,7 +865,7 @@ export const generateXml = (data, { version, cdc, fecha, codigoSeguridad }) => {
  * @param {integer} documentType:1 [Factura electrónica] || 5 [Nota de crédito electrónica]
  * @returns {promises}
  */
-export const signXml = (data, xmlName, cert, key, passphrase, documentType) => {
+export const signXml = (idDe, xmlName, cert, key, passphrase, documentType) => {
   return new Promise(async (resolve, reject) => {
     /**Registra log */
     const logMessage = `Insertando firma digital al XML.`;
@@ -870,7 +875,7 @@ export const signXml = (data, xmlName, cert, key, passphrase, documentType) => {
       )}]: ${logMessage}`
     );
     let payload = {
-      numero: data.timbrado.numeroDocumento,
+      idDe: idDe,
       message: logMessage,
       tipoLog: "info",
     };
@@ -897,6 +902,8 @@ export const signXml = (data, xmlName, cert, key, passphrase, documentType) => {
     }
     const xml = fs.readFileSync(xmlPath).toString();
     try {
+      sig.canonicalizationAlgorithm =
+        "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
       sig.addReference(
         XML_SIGNATURE_PATH,
         [
@@ -962,7 +969,7 @@ export const signXml = (data, xmlName, cert, key, passphrase, documentType) => {
  * @param {integer} documentType: 1 [Factura electrónica] || 5 [Nota de crédito electrónica]
  * @returns {promises}
  */
-export const generateUrlForQr = (data, xmlName, documentType) => {
+export const generateUrlForQr = (idDe, xmlName, documentType) => {
   return new Promise(async (resolve, reject) => {
     /**Registra log */
     const logMessage = `Generando URL de código QR.`;
@@ -972,7 +979,7 @@ export const generateUrlForQr = (data, xmlName, documentType) => {
       )}]: ${logMessage}`
     );
     let payload = {
-      numero: data.timbrado.numeroDocumento,
+      numero: idDe,
       message: logMessage,
       tipoLog: "info",
     };
@@ -1026,7 +1033,7 @@ export const generateUrlForQr = (data, xmlName, documentType) => {
     }
   });
 };
-export const generateQr = (data, url) => {
+export const generateQr = (idDe, url) => {
   return new Promise(async (resolve, reject) => {
     /**Registra log */
     const logMessage = `Generando código QR.`;
@@ -1036,7 +1043,7 @@ export const generateQr = (data, url) => {
       )}]: ${logMessage}`
     );
     let payload = {
-      numero: data.timbrado.numeroDocumento,
+      idDe: idDe,
       message: logMessage,
       tipoLog: "info",
     };
@@ -1060,13 +1067,20 @@ export const generateQr = (data, url) => {
  * @param {string} url: https://ekuatia.set.gov.py/consultas-test/qr?nVersion=150...
  * @returns {promises}
  */
-export const addUrlQrToXml = (xmlName, documentType, url) => {
-  return new Promise((resolve, reject) => {
+export const addUrlQrToXml = (idDe, xmlName, documentType, url) => {
+  return new Promise(async (resolve, reject) => {
+    const logMessage = `Insertando URL de código QR a xml.`;
     console.log(
       `[${moment(new Date()).format(
         "DD/MM/YYYY hh:mm:ss.SSSZ"
-      )}]: Insertando URL de código QR a xml.`
+      )}]: ${logMessage}`
     );
+    let payload = {
+      idDe: idDe,
+      message: logMessage,
+      tipoLog: "info",
+    };
+    await insertLog(payload);
     let xmlPath = "";
     //Factura electrónica
     if (documentType === 1) {
@@ -1131,7 +1145,7 @@ export const addUrlQrToXml = (xmlName, documentType, url) => {
  * @param {json} data
  * @param {string} qr
  */
-export const generateKude = (data, qr, cdc) => {
+export const generateKude = (idDe, data, qr, cdc) => {
   return new Promise(async (resolve, reject) => {
     /**Registra log */
     const logMessage = `Generando Kude.`;
@@ -1141,7 +1155,7 @@ export const generateKude = (data, qr, cdc) => {
       )}]: ${logMessage}`
     );
     let payload = {
-      numero: data.timbrado.numeroDocumento,
+      idDe: idDe,
       message: logMessage,
       tipoLog: "info",
     };
@@ -1150,7 +1164,7 @@ export const generateKude = (data, qr, cdc) => {
     const logoBase64 = base64_encode("logo.png");
     const logo = `data:image/png;base64,${logoBase64}`;
     let rows = data.documentoElectronico.items.length;
-    let first = 22;
+    let first = 17; //let first = 22;
     let next = 33;
     let last = 29;
     let pages = 0;
@@ -1183,8 +1197,8 @@ export const generateKude = (data, qr, cdc) => {
       }
     } while (rows > 0);
     if (pages === 1) {
-      first = 17;
-      maxRows = 17;
+      first = 12; //first = 17;
+      maxRows = 12; //maxRows = 17;
     }
     try {
       const browser = await puppeteer.launch();
@@ -1313,7 +1327,7 @@ const base64_encode = function (fileName) {
   return Buffer.from(bitmap).toString("base64");
 };
 
-export const sendEmail = (data, from, to, subject, text, attached) => {
+export const sendEmail = (idDe, from, to, subject, text, attached) => {
   return new Promise(async (resolve, reject) => {
     /**Registra log */
     const logMessage = `Enviando Kude a ${to}.`;
@@ -1323,7 +1337,7 @@ export const sendEmail = (data, from, to, subject, text, attached) => {
       )}]: ${logMessage}`
     );
     let payload = {
-      numero: data.timbrado.numeroDocumento,
+      idDe: idDe,
       message: logMessage,
       tipoLog: "info",
     };
@@ -1366,12 +1380,32 @@ export const sendEmail = (data, from, to, subject, text, attached) => {
 export const generateElectronicDocument = (data) => {
   return new Promise(async (resolve, reject) => {
     let payload;
+    let idDe;
+    let tipoDe;
+    let cdc;
     try {
-      /**Obtiene datos del tipo de documento electrónico */
-      const tipoDe = await getTipoDeByCode(
-        data.timbrado.tipoDE,
-        data.timbrado.numeroDocumento
+      /**Registrar generación de documento electrónico */
+      idDe = await insertDe(
+        `${data.camposGeneralesDE.receptor.ruc}-${data.camposGeneralesDE.receptor.digitoVerificador}`,
+        `${data.timbrado.establecimiento}-${data.timbrado.puntoExpedicion}-${data.timbrado.numeroDocumento}`,
+        data.camposGeneralesDE.receptor.nombre
       );
+      /**Registra log */
+      let logMessage = `Iniciando proceso de generación de documento electrónico.`;
+      console.log(
+        `[${moment(new Date()).format(
+          "DD/MM/YYYY hh:mm:ss.SSSZ"
+        )}]: ${logMessage}`
+      );
+      payload = {
+        idDe: idDe,
+        message: logMessage,
+        tipoLog: "info",
+      };
+      await insertLog(payload);
+      /**---------------------- */
+      /**Obtiene datos del tipo de documento electrónico */
+      tipoDe = await getTipoDeByCode(idDe, data.timbrado.tipoDE);
       if (tipoDe) {
         data.timbrado.tipoDE = tipoDe.tipo_de;
         data.timbrado.desTipoDE = tipoDe.descripcion;
@@ -1379,7 +1413,7 @@ export const generateElectronicDocument = (data) => {
       /**Calcula los valores para los atributos */
       const fecha = moment(new Date()).format("YYYY-MM-DDThh:mm:ss");
       const codigoSeguridad = generateSecurityCode();
-      const cdc = generateCdc({
+      cdc = generateCdc({
         tipoDe:
           data.timbrado.tipoDE.toString().length === 1
             ? "0" + data.timbrado.tipoDE
@@ -1399,33 +1433,15 @@ export const generateElectronicDocument = (data) => {
       data.digitoVerificadorDE = calculateDv(cdc);
       data.fechaFirmaDigital = fecha;
       data.camposGeneralesDE.fechaEmisionDE = fecha;
-      /**Registra log */
-      let logMessage = `Iniciando proceso de generación de documento electrónico.`;
-      console.log(
-        `[${moment(new Date()).format(
-          "DD/MM/YYYY hh:mm:ss.SSSZ"
-        )}]: ${logMessage}`
-      );
-      payload = {
-        tipoDe: data.timbrado.tipoDE,
-        numero: data.timbrado.numeroDocumento,
-        message: logMessage,
-        tipoLog: "info",
-        cdc,
-      };
-      await insertLog(payload);
-      /**---------------------- */
       /**Obtiene datos del sistema de facturación */
-      const sistemaFacturacion = await getSistemaFacturacionByCode(
-        data.timbrado.numeroDocumento
-      );
+      const sistemaFacturacion = await getSistemaFacturacionByCode(idDe);
       if (sistemaFacturacion) {
         data.sistemaFacturacion = sistemaFacturacion.codigo;
       }
       /**Obtiene datos del tipo de emisión */
       const tipoEmision = await getTipoEmisionDeByCode(
         data.operacionDE.tipoEmision,
-        data.timbrado.numeroDocumento
+        idDe
       );
       if (tipoEmision) {
         data.operacionDE.desTipoEmision = tipoEmision.descripcion;
@@ -1436,7 +1452,7 @@ export const generateElectronicDocument = (data) => {
       ) {
         const tipoTransaccion = await getTipoTransaccionByCode(
           data.camposGeneralesDE.operacionComercial.tipoTransaccion,
-          data.timbrado.numeroDocumento
+          idDe
         );
         if (tipoTransaccion) {
           data.camposGeneralesDE.operacionComercial.desTransaccion =
@@ -1446,7 +1462,7 @@ export const generateElectronicDocument = (data) => {
       /**Obtiene los datos del tipo de impuesto */
       const tipoImpuesto = await getTipoImpuestoByCode(
         data.camposGeneralesDE.operacionComercial.tipoImpuesto,
-        data.timbrado.numeroDocumento
+        idDe
       );
       if (tipoImpuesto) {
         data.camposGeneralesDE.operacionComercial.desTipoImpuesto =
@@ -1455,7 +1471,7 @@ export const generateElectronicDocument = (data) => {
       /**Obtiene los datos de la moneda de la operación comercial*/
       const monedaOc = await getMonedaByCode(
         data.camposGeneralesDE.operacionComercial.moneda,
-        data.timbrado.numeroDocumento
+        idDe
       );
       if (monedaOc) {
         data.camposGeneralesDE.operacionComercial.moneda = monedaOc.codigo;
@@ -1465,7 +1481,7 @@ export const generateElectronicDocument = (data) => {
       /**Obtiene los datos del departamento del emisor*/
       const departamentoEmisor = await getDepartamentoByCode(
         data.camposGeneralesDE.emisor.departamento,
-        data.timbrado.numeroDocumento
+        idDe
       );
       if (departamentoEmisor) {
         data.camposGeneralesDE.emisor.departamento = departamentoEmisor.codigo;
@@ -1475,7 +1491,7 @@ export const generateElectronicDocument = (data) => {
       /**Obtiene los datos del distrito del emisor*/
       const distritoEmisor = await getDistritoByCode(
         data.camposGeneralesDE.emisor.distrito,
-        data.timbrado.numeroDocumento
+        idDe
       );
       if (distritoEmisor) {
         data.camposGeneralesDE.emisor.distrito = distritoEmisor.codigo;
@@ -1484,7 +1500,7 @@ export const generateElectronicDocument = (data) => {
       /**Obtiene los datos de la ciudad del emisor*/
       const ciudadEmisor = await getCiudadByCode(
         data.camposGeneralesDE.emisor.ciudad,
-        data.timbrado.numeroDocumento
+        idDe
       );
       if (ciudadEmisor) {
         data.camposGeneralesDE.emisor.ciudad = ciudadEmisor.codigo;
@@ -1494,7 +1510,7 @@ export const generateElectronicDocument = (data) => {
       if (data.camposGeneralesDE.receptor.pais) {
         const paisReceptor = await getPaisByCode(
           data.camposGeneralesDE.receptor.pais,
-          data.timbrado.numeroDocumento
+          idDe
         );
         if (paisReceptor) {
           data.camposGeneralesDE.receptor.pais = paisReceptor.codigo;
@@ -1505,7 +1521,7 @@ export const generateElectronicDocument = (data) => {
       if (data.camposGeneralesDE.receptor.departamento) {
         const departamentoReceptor = await getDepartamentoByCode(
           data.camposGeneralesDE.receptor.departamento,
-          data.timbrado.numeroDocumento
+          idDe
         );
         if (departamentoReceptor) {
           data.camposGeneralesDE.receptor.departamento =
@@ -1518,7 +1534,7 @@ export const generateElectronicDocument = (data) => {
       if (data.camposGeneralesDE.receptor.distrito) {
         const distritoReceptor = await getDistritoByCode(
           data.camposGeneralesDE.receptor.distrito,
-          data.timbrado.numeroDocumento
+          idDe
         );
         if (distritoReceptor) {
           data.camposGeneralesDE.receptor.distrito = distritoReceptor.codigo;
@@ -1530,7 +1546,7 @@ export const generateElectronicDocument = (data) => {
       if (data.camposGeneralesDE.receptor.ciudad) {
         const ciudadReceptor = await getCiudadByCode(
           data.camposGeneralesDE.receptor.ciudad,
-          data.timbrado.numeroDocumento
+          idDe
         );
         if (ciudadReceptor) {
           data.camposGeneralesDE.receptor.ciudad = ciudadReceptor.codigo;
@@ -1542,7 +1558,7 @@ export const generateElectronicDocument = (data) => {
         /**Obtiene los datos del tipo de indicador de presencia*/
         const tipoIndicadorPresencia = await getTipoIndicadorPresenciaByCode(
           data.documentoElectronico.facturaElectronica.indicadorPresencia,
-          data.timbrado.numeroDocumento
+          idDe
         );
         if (tipoIndicadorPresencia) {
           data.documentoElectronico.facturaElectronica.desIndicadorPresencia =
@@ -1555,7 +1571,7 @@ export const generateElectronicDocument = (data) => {
         /**Obtiene los datos del tipo de indicador de presencia*/
         const motivoEmision = await getMotivoEmisionNotaCreditoByCode(
           data.documentoElectronico.notaCreditoDebitoElectronica.motivoEmision,
-          data.timbrado.numeroDocumento
+          idDe
         );
         if (motivoEmision) {
           data.documentoElectronico.notaCreditoDebitoElectronica.desMotivoEmision =
@@ -1566,7 +1582,7 @@ export const generateElectronicDocument = (data) => {
       if (data.documentoElectronico.condicionOperacion !== undefined) {
         const condicion = await getCondicionOperacionByCode(
           data.documentoElectronico.condicionOperacion.condicion,
-          data.timbrado.numeroDocumento
+          idDe
         );
         if (condicion) {
           data.documentoElectronico.condicionOperacion.desCondicion =
@@ -1575,7 +1591,7 @@ export const generateElectronicDocument = (data) => {
         /**Obtiene los datos de la condición de crédito*/
         const condicionCredito = await getCondicionCreditoByCode(
           data.documentoElectronico.condicionOperacion.pagoCredito.condicion,
-          data.timbrado.numeroDocumento
+          idDe
         );
         if (condicionCredito) {
           data.documentoElectronico.condicionOperacion.pagoCredito.desCondicion =
@@ -1586,10 +1602,7 @@ export const generateElectronicDocument = (data) => {
         if (data.documentoElectronico.condicionOperacion.pagoCredito.cuotas) {
           data.documentoElectronico.condicionOperacion.pagoCredito.cuotas.forEach(
             async (c) => {
-              let monedaCu = await getMonedaByCode(
-                c.moneda,
-                data.timbrado.numeroDocumento
-              );
+              let monedaCu = await getMonedaByCode(c.moneda, idDe);
               if (monedaCu) {
                 c.moneda = monedaCu.codigo;
                 c.desMoneda = monedaCu.descripcion;
@@ -1603,7 +1616,7 @@ export const generateElectronicDocument = (data) => {
         if (item.unidadMedida !== undefined) {
           const unidadMedida = await getUnidadMedidaByCode(
             item.unidadMedida,
-            data.timbrado.numeroDocumento
+            idDe
           );
           if (unidadMedida) {
             item.unidadMedida = unidadMedida.codigo;
@@ -1616,7 +1629,7 @@ export const generateElectronicDocument = (data) => {
         const afectacionTributariaIva =
           await getFormaAfectacionTributariaIvaByCode(
             item.iva.afectacionTributariaIva,
-            data.timbrado.numeroDocumento
+            idDe
           );
         if (afectacionTributariaIva) {
           item.iva.desAfectacionTributariaIva =
@@ -1628,7 +1641,7 @@ export const generateElectronicDocument = (data) => {
         for (const item of data.DeAsociado) {
           const tipoDocumentoAsociado = await getTipoDocumentoAsociadoByCode(
             item.tipo,
-            data.timbrado.numeroDocumento
+            idDe
           );
           if (tipoDocumentoAsociado) {
             item.desTipo = tipoDocumentoAsociado.descripcion;
@@ -1636,9 +1649,9 @@ export const generateElectronicDocument = (data) => {
         }
       }
       /**Valida los datos */
-      await validateData(data);
+      await validateData(idDe, data);
       /**Genera xml */
-      await generateXml(data, {
+      await generateXml(idDe, data, {
         version: 150,
         cdc,
         fecha,
@@ -1646,7 +1659,7 @@ export const generateElectronicDocument = (data) => {
       });
       /**Inserta firma digital al xml */
       await signXml(
-        data,
+        idDe,
         `${cdc}.xml`,
         config.cert,
         config.key,
@@ -1655,16 +1668,16 @@ export const generateElectronicDocument = (data) => {
       );
       /**Genera url del QR */
       const urlQr = await generateUrlForQr(
-        data,
+        idDe,
         `${cdc}.xml`,
         data.timbrado.tipoDE
       );
       /**Inserta url del QR al xml firmado */
-      await addUrlQrToXml(`${cdc}.xml`, data.timbrado.tipoDE, urlQr);
+      await addUrlQrToXml(idDe, `${cdc}.xml`, data.timbrado.tipoDE, urlQr);
       /**Genera código QR */
-      const qr = await generateQr(data, urlQr);
+      const qr = await generateQr(idDe, urlQr);
       /**Genera Kude */
-      await generateKude(data, qr, cdc);
+      await generateKude(idDe, data, qr, cdc);
       /**Registra log */
       logMessage = `Documento electrónico generado exitosamente.`;
       console.log(
@@ -1673,8 +1686,7 @@ export const generateElectronicDocument = (data) => {
         )}]: ${logMessage}`
       );
       payload = {
-        estado: 1,
-        numero: data.timbrado.numeroDocumento,
+        idDe: idDe,
         message: logMessage,
         tipoLog: "info",
       };
@@ -1691,22 +1703,22 @@ export const generateElectronicDocument = (data) => {
         pathKude = path.join(config.paths.kude.creditNotes, `${cdc}.pdf`);
       }
       await sendEmail(
-        data,
+        idDe,
         config.emailFrom,
         data.camposGeneralesDE.receptor.email,
         "Kude de prueba",
         "Kude enviado de prueba",
         pathKude
       );
+      await updateDe(idDe, tipoDe.tipo_de, 1, cdc);
       resolve(cdc);
     } catch (err) {
-      //console.log(err);
+      await updateDe(idDe, tipoDe.tipo_de, 2, cdc);
       /**Registra log */
       if (err.hasOwnProperty("details")) {
         err.details.forEach(async (e) => {
           payload = {
-            numero: data.timbrado.numeroDocumento,
-            estado: 2,
+            idDe: idDe,
             message: e,
             tipoLog: "error",
           };
@@ -1714,8 +1726,7 @@ export const generateElectronicDocument = (data) => {
         });
       } else {
         payload = {
-          numero: data.timbrado.numeroDocumento,
-          estado: 2,
+          idDe: idDe,
           message: err,
           tipoLog: "error",
         };
@@ -1727,7 +1738,7 @@ export const generateElectronicDocument = (data) => {
   });
 };
 
-export const validateData = (data) => {
+export const validateData = (idDe, data) => {
   return new Promise((resolve, reject) => {
     /**Registra log */
     const logMessage = `Validando datos.`;
@@ -1737,7 +1748,7 @@ export const validateData = (data) => {
       )}]: ${logMessage}`
     );
     let payload = {
-      numero: data.timbrado.numeroDocumento,
+      idDe: idDe,
       message: logMessage,
       tipoLog: "info",
     };

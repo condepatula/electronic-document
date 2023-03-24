@@ -2,8 +2,16 @@ import forge from "node-forge";
 import fs from "fs";
 
 export const formatXml = (xml) => {
-  let xmlFormated = xml.replace(/[\n|\r\n]/g, "");
-  return xmlFormated;
+  /*let xmlFormated = xml.replace(/[\n|\r\n]/g, "");
+  return xmlFormated;*/
+  xml = xml.split("\r\n").join("");
+  xml = xml.split("\n").join("");
+  xml = xml.split("\t").join("");
+  xml = xml.split("    ").join("");
+  xml = xml.split(">    <").join("><");
+  xml = xml.split(">  <").join("><");
+  xml = xml.replace(/\r?\n|\r/g, "");
+  return xml;
 };
 
 export const validateDecimal = (number, decMinSize, decMaxSize) => {

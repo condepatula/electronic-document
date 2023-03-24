@@ -1,6 +1,7 @@
 import builder from "xmlbuilder";
 import xml2js from "xml2js";
 import fs from "fs";
+import path from "path";
 import https from "https";
 import axios from "axios";
 import { XMLParser } from "fast-xml-parser";
@@ -15,19 +16,34 @@ const enviarDocumentoElectronico = (idDe, fileName) => {
   return new Promise(async (resolve, reject) => {
     const id = await registerSendingElectronicDocument({ idDe });
     const xml = await generateXmlToSend(id, fileName);
+    //fs.writeFileSync(path.join(process.cwd(), "send.xml"), xml);
+    //console.log(helper.formatXml(xml));
     const httpsAgent = new https.Agent({
-      cert: fs.readFileSync(new URL(`../cert/sds_public.pem`, import.meta.url)),
-      key: helper.readPrivateKeyFromProtectedPem("sds.pem", config.passphrase),
-      //ca: fs.readFileSync("ca.crt"),
+      cert: fs.readFileSync(
+        path.join(process.cwd(), "cert", "F1T_9960.crt"),
+        "utf-8"
+      ),
+      key: helper.readPrivateKeyFromProtectedPem(
+        "F1T_9960.key",
+        config.passphrase
+      ),
     });
+    fs.writeFileSync(
+      path.join(process.cwd(), "send.xml"),
+      helper.formatXml(xml)
+    );
     try {
       const response = await axios.post(
         config.url_recibe,
         helper.formatXml(xml),
         {
+          headers: {
+            "Content-Type": "application/xml; charset=utf-8",
+          },
           httpsAgent,
         }
       );
+      //console.log("OK", response.data);
       if (response.data.search("<html>").index < 0) {
         let jsonResponse = responseXmlToJson(response.data);
         jsonResponse.mensajes.forEach(async (e) => {
@@ -45,6 +61,7 @@ const enviarDocumentoElectronico = (idDe, fileName) => {
             : "",
       });
     } catch (err) {
+      //console.log("NO OK", err);
       reject({
         success: false,
         message: err,
@@ -56,10 +73,14 @@ const enviarDocumentoElectronico = (idDe, fileName) => {
 const generateXmlToSend = (id, fileName) => {
   return new Promise((resolve, reject) => {
     let envelope = builder
-      .create("soap:Envelope")
+      .create("soap:Envelope", {
+        version: "1.0",
+        encoding: "UTF-8",
+        standalone: undefined,
+      })
       .att("xmlns:soap", "http://www.w3.org/2003/05/soap-envelope");
     envelope.e("soap:Header");
-    let body = envelope.e("soap:body");
+    let body = envelope.e("soap:Body");
     let rEnviDe = body.e("rEnviDe", {
       xmlns: "http://ekuatia.set.gov.py/sifen/xsd",
     });
@@ -70,6 +91,7 @@ const generateXmlToSend = (id, fileName) => {
     const xml = fs.readFileSync(xmlPath).toString();
     const parser = new xml2js.Parser();
     const parser2 = new xml2js.Parser();
+    console.log("ORIGINAL", xml);
     parser
       .parseStringPromise(request)
       .then((res) => {
@@ -79,15 +101,21 @@ const generateXmlToSend = (id, fileName) => {
             let obj = {
               ["soap:Envelope"]: {
                 ...res["soap:Envelope"],
-                ["soap:body"]: {
+                ["soap:Body"]: {
                   rEnviDe: {
-                    ...res["soap:Envelope"]["soap:body"][0]["rEnviDe"][0],
+                    ...res["soap:Envelope"]["soap:Body"][0]["rEnviDe"][0],
                     xDE: { ...res2 },
                   },
                 },
               },
             };
-            const builder = new xml2js.Builder();
+            const builder = new xml2js.Builder({
+              xmldec: {
+                version: "1.0",
+                encoding: "UTF-8",
+                standalone: undefined,
+              },
+            });
             const _xml = builder.buildObject(obj);
             resolve(_xml);
           })
@@ -100,7 +128,7 @@ const generateXmlToSend = (id, fileName) => {
 export const responseXmlToJson = (xml) => {
   const parser = new XMLParser();
   const json =
-    parser.parse(xml)["soap:Envelope"]["soap:body"]["ns2:rRetEnviDe"][
+    parser.parse(xml)["env:Envelope"]["env:Body"]["ns2:rRetEnviDe"][
       "ns2:rProtDe"
     ];
   let result = {
@@ -111,12 +139,19 @@ export const responseXmlToJson = (xml) => {
     nroTransaccion: json["ns2:dProtAut"],
   };
   let mensajes = [];
-  json["ns2:gResProc"].forEach((e) => {
-    mensajes.push({
-      codigo: e["ns2:dCodRes"],
-      mensaje: e["ns2:dMsgRes"],
+  if (Array.isArray(json["ns2:gResProc"])) {
+    json["ns2:gResProc"].forEach((e) => {
+      mensajes.push({
+        codigo: e["ns2:dCodRes"],
+        mensaje: e["ns2:dMsgRes"],
+      });
     });
-  });
+  } else {
+    mensajes.push({
+      codigo: json["ns2:gResProc"]["ns2:dCodRes"],
+      mensaje: json["ns2:gResProc"]["ns2:dMsgRes"],
+    });
+  }
   result = { ...result, mensajes };
   return result;
 };
