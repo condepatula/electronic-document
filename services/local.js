@@ -95,8 +95,8 @@ export const generateXml = (
       );
     rDE.e("dVerFor", version);
     /**A. Campos firmados del Documento Electrónico (A001-A099)*/
-    let DE = rDE.e("DE", { Id: cdc });
-    DE.e("dDVId", calculateDv(cdc));
+    let DE = rDE.e("DE", { Id: data.id });
+    DE.e("dDVId", data.digitoVerificadorDE);
     DE.e("dFecFirma", fecha);
     DE.e("dSisFact", data.sistemaFacturacion);
     /**B. Campos inherentes a la operación de Documentos Electrónicos (B001-B099)*/
@@ -296,10 +296,16 @@ export const generateXml = (
       gDatRec.e("cCiuRec", data.camposGeneralesDE.receptor.ciudad);
       gDatRec.e("dDesCiuRec", data.camposGeneralesDE.receptor.desCiudad);
     }
-    if (data.camposGeneralesDE.receptor.hasOwnProperty("telefono")) {
+    if (
+      data.camposGeneralesDE.receptor.hasOwnProperty("telefono") &&
+      data.camposGeneralesDE.receptor.telefono
+    ) {
       gDatRec.e("dTelRec", data.camposGeneralesDE.receptor.telefono);
     }
-    if (data.camposGeneralesDE.receptor.hasOwnProperty("celular")) {
+    if (
+      data.camposGeneralesDE.receptor.hasOwnProperty("celular") &&
+      data.camposGeneralesDE.receptor.celular
+    ) {
       gDatRec.e("dCelRec", data.camposGeneralesDE.receptor.celular);
     }
     if (data.camposGeneralesDE.receptor.hasOwnProperty("email")) {
@@ -1430,7 +1436,7 @@ export const generateElectronicDocument = (data) => {
       });
       /**Asigna los valores a los atributos del parámetro */
       data.id = cdc;
-      data.digitoVerificadorDE = calculateDv(cdc);
+      data.digitoVerificadorDE = cdc.substring(43);
       data.fechaFirmaDigital = fecha;
       data.camposGeneralesDE.fechaEmisionDE = fecha;
       /**Obtiene datos del sistema de facturación */
@@ -1620,7 +1626,7 @@ export const generateElectronicDocument = (data) => {
           );
           if (unidadMedida) {
             item.unidadMedida = unidadMedida.codigo;
-            item.desUnidadMedida = unidadMedida.descripcion;
+            item.desUnidadMedida = unidadMedida.representacion;
           }
         }
       }

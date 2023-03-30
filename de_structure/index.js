@@ -2953,7 +2953,7 @@ export const root = {
             id: "E710",
             parent: "E700",
             value: unidadMedida,
-            attribute: "descripcion",
+            attribute: "representacion",
             description: "Descripción de la unidad de medida",
             observation: "",
             location:

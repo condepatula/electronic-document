@@ -1,3 +1,4 @@
+import { calculateDv } from "./helpers/index.js";
 import sifen from "./services/sifen.js";
 /*import fs from "fs";
 import path from "path";
@@ -7,10 +8,10 @@ const response = sifen.responseXmlToJson(file);
 
 console.log(response);*/
 
-try {
+/*try {
   const response = await sifen.enviarDocumentoElectronico(
-    103,
-    "01800090578001123007433122023032212383687829.xml"
+    120,
+    "01800090578001001007433122023032714259818715.xml"
   );
   console.log(response);
 } catch (err) {
@@ -22,8 +23,9 @@ try {
     data: err.message.response.config.data,
     message: JSON.stringify(sifen.responseXmlToJson(err.message.response.data)),
   });
-}
-
+}*/
+let res = "01800090578001001007433122023032814468184326".substring(43);
+console.log(res);
 /*var _xml = `<?xml version="1.0" encoding="UTF-8"?>
   <rDE xmlns="http://ekuatia.set.gov.py/sifen/xsd" 
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
