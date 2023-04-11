@@ -2552,12 +2552,12 @@ export const insertCliente = (ruc, nombre) => {
   });
 };
 
-export const updateDe = (idDe, tipoDe, estado, cdc) => {
+export const updateDe = (idDe, tipoDe, estado, cdc, xml) => {
   return new Promise(async (resolve, reject) => {
     try {
       await pool.query(
-        `UPDATE de SET tipo_de=$1, estado=$2, cdc=$3, archivo=$4 WHERE id=$5`,
-        [tipoDe, estado, cdc, `${cdc}.xml`, idDe]
+        `UPDATE de SET tipo_de=$1, estado=$2, cdc=$3, archivo=$4, xml=$5 WHERE id=$6`,
+        [tipoDe, estado, cdc, `${cdc}.xml`, xml, idDe]
       );
       resolve();
     } catch (error) {

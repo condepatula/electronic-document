@@ -10,7 +10,6 @@ import hbs from "handlebars";
 import moment from "moment";
 import nodemailer from "nodemailer";
 import {
-  calculateDv,
   formatXml,
   readPrivateKeyFromProtectedPem,
   removeHeaders,
@@ -308,7 +307,10 @@ export const generateXml = (
     ) {
       gDatRec.e("dCelRec", data.camposGeneralesDE.receptor.celular);
     }
-    if (data.camposGeneralesDE.receptor.hasOwnProperty("email")) {
+    if (
+      data.camposGeneralesDE.receptor.hasOwnProperty("email") &&
+      data.camposGeneralesDE.receptor.email
+    ) {
       gDatRec.e("dEmailRec", data.camposGeneralesDE.receptor.email);
     }
     if (data.camposGeneralesDE.receptor.hasOwnProperty("codigoCliente")) {
@@ -938,7 +940,7 @@ export const signXml = (idDe, xmlName, cert, key, passphrase, documentType) => {
               `Error durante el proceso de firma digital del documento ${xmlName}: ${err}`
             ),
           });
-        resolve();
+        resolve(sig.getSignedXml());
       });
     } catch (error) {
       if (error.code === "ENOENT") {
@@ -1389,6 +1391,7 @@ export const generateElectronicDocument = (data) => {
     let idDe;
     let tipoDe;
     let cdc;
+    let xmlSigned;
     try {
       /**Registrar generación de documento electrónico */
       idDe = await insertDe(
@@ -1664,7 +1667,7 @@ export const generateElectronicDocument = (data) => {
         codigoSeguridad,
       });
       /**Inserta firma digital al xml */
-      await signXml(
+      xmlSigned = await signXml(
         idDe,
         `${cdc}.xml`,
         config.cert,
@@ -1708,18 +1711,18 @@ export const generateElectronicDocument = (data) => {
       if (data.timbrado.tipoDE === 5) {
         pathKude = path.join(config.paths.kude.creditNotes, `${cdc}.pdf`);
       }
-      await sendEmail(
+      /*await sendEmail(
         idDe,
         config.emailFrom,
         data.camposGeneralesDE.receptor.email,
         "Kude de prueba",
         "Kude enviado de prueba",
         pathKude
-      );
-      await updateDe(idDe, tipoDe.tipo_de, 1, cdc);
+      );*/
+      await updateDe(idDe, tipoDe.tipo_de, 1, cdc, formatXml(xmlSigned));
       resolve(cdc);
     } catch (err) {
-      await updateDe(idDe, tipoDe.tipo_de, 2, cdc);
+      await updateDe(idDe, tipoDe.tipo_de, 2, cdc, formatXml(xmlSigned));
       /**Registra log */
       if (err.hasOwnProperty("details")) {
         err.details.forEach(async (e) => {
