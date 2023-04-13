@@ -1305,7 +1305,7 @@ export const root = {
             minOccurrence: 0,
             maxOccurrence: 1,
             required:
-              "data['camposGeneralesDE']['receptor']['direccion']!==null && data['camposGeneralesDE']['receptor']['direccion']!==undefined && data['camposGeneralesDE']['receptor']['tipoOperacion']!==4 ? true : false",
+              "data['camposGeneralesDE']['receptor']['direccion']!=='' && data['camposGeneralesDE']['receptor']['direccion']!==null && data['camposGeneralesDE']['receptor']['direccion']!==undefined && data['camposGeneralesDE']['receptor']['tipoOperacion']!==4 ? true : false",
             type: "number",
             group: "D3",
             id: "D219",
@@ -1323,7 +1323,7 @@ export const root = {
             minOccurrence: 0,
             maxOccurrence: 1,
             required:
-              "data['camposGeneralesDE']['receptor']['departamento']!==null && data['camposGeneralesDE']['receptor']['departamento']!==undefined ? true : false",
+              "data['camposGeneralesDE']['receptor']['departamento']!=='' && data['camposGeneralesDE']['receptor']['departamento']!==null && data['camposGeneralesDE']['receptor']['departamento']!==undefined ? true : false",
             type: "string",
             group: "D3",
             id: "D220",
@@ -1358,7 +1358,7 @@ export const root = {
             minOccurrence: 0,
             maxOccurrence: 1,
             required:
-              "data['camposGeneralesDE']['receptor']['distrito']!==null && data['camposGeneralesDE']['receptor']['distrito']!==undefined ? true : false",
+              "data['camposGeneralesDE']['receptor']['distrito']!=='' && data['camposGeneralesDE']['receptor']['distrito']!==null && data['camposGeneralesDE']['receptor']['distrito']!==undefined ? true : false",
             type: "string",
             group: "D3",
             id: "D222",
@@ -1376,7 +1376,7 @@ export const root = {
             minOccurrence: 0,
             maxOccurrence: 1,
             required:
-              "data['camposGeneralesDE']['receptor']['direccion']!==null && data['camposGeneralesDE']['receptor']['direccion']!==undefined && data['camposGeneralesDE']['receptor']['tipoOperacion']!==4 ? true : false",
+              "data['camposGeneralesDE']['receptor']['direccion']!=='' && data['camposGeneralesDE']['receptor']['direccion']!==null && data['camposGeneralesDE']['receptor']['direccion']!==undefined && data['camposGeneralesDE']['receptor']['tipoOperacion']!==4 ? true : false",
             type: "number",
             group: "D3",
             id: "D223",
@@ -1394,7 +1394,7 @@ export const root = {
             minOccurrence: 0,
             maxOccurrence: 1,
             required:
-              "data['camposGeneralesDE']['receptor']['ciudad']!==null && data['camposGeneralesDE']['receptor']['ciudad']!==undefined ? true : false",
+              "data['camposGeneralesDE']['receptor']['ciudad']!=='' && data['camposGeneralesDE']['receptor']['ciudad']!==null && data['camposGeneralesDE']['receptor']['ciudad']!==undefined ? true : false",
             type: "string",
             group: "D3",
             id: "D224",
@@ -3863,6 +3863,8 @@ export const root = {
         decMaxSize: 8,
         minOccurrence: 0,
         maxOccurrence: 1,
+        /*required:
+          "data['camposGeneralesDE']['operacionComercial']['moneda']!=='PYG' && data['camposGeneralesDE']['operacionComercial']['condicionTipoCambio']===1 ? true : false",*/
         type: "number",
         group: "F",
         id: "F023",

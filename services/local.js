@@ -274,24 +274,39 @@ export const generateXml = (
       gDatRec.e("dNumIDRec", data.camposGeneralesDE.receptor.numeroDocumento);
     }
     gDatRec.e("dNomRec", data.camposGeneralesDE.receptor.nombre);
-    if (data.camposGeneralesDE.receptor.hasOwnProperty("nombreFantasia")) {
+    if (
+      data.camposGeneralesDE.receptor.hasOwnProperty("nombreFantasia") &&
+      data.camposGeneralesDE.receptor.nombreFantasia
+    ) {
       gDatRec.e("dNomFanRec", data.camposGeneralesDE.receptor.nombreFantasia);
     }
-    if (data.camposGeneralesDE.receptor.hasOwnProperty("direccion")) {
+    if (
+      data.camposGeneralesDE.receptor.hasOwnProperty("direccion") &&
+      data.camposGeneralesDE.receptor.direccion
+    ) {
       gDatRec.e("dDirRec", data.camposGeneralesDE.receptor.direccion);
     }
     if (data.camposGeneralesDE.receptor.hasOwnProperty("numeroCasa")) {
       gDatRec.e("dNumCasRec", data.camposGeneralesDE.receptor.numeroCasa);
     }
-    if (data.camposGeneralesDE.receptor.hasOwnProperty("departamento")) {
+    if (
+      data.camposGeneralesDE.receptor.hasOwnProperty("departamento") &&
+      data.camposGeneralesDE.receptor.departamento
+    ) {
       gDatRec.e("cDepRec", data.camposGeneralesDE.receptor.departamento);
       gDatRec.e("dDesDepRec", data.camposGeneralesDE.receptor.desDepartamento);
     }
-    if (data.camposGeneralesDE.receptor.hasOwnProperty("distrito")) {
+    if (
+      data.camposGeneralesDE.receptor.hasOwnProperty("distrito") &&
+      data.camposGeneralesDE.receptor.desDistrito
+    ) {
       gDatRec.e("cDisRec", data.camposGeneralesDE.receptor.distrito);
       gDatRec.e("dDesDisRec", data.camposGeneralesDE.receptor.desDistrito);
     }
-    if (data.camposGeneralesDE.receptor.hasOwnProperty("ciudad")) {
+    if (
+      data.camposGeneralesDE.receptor.hasOwnProperty("ciudad") &&
+      data.camposGeneralesDE.receptor.ciudad
+    ) {
       gDatRec.e("cCiuRec", data.camposGeneralesDE.receptor.ciudad);
       gDatRec.e("dDesCiuRec", data.camposGeneralesDE.receptor.desCiudad);
     }
@@ -803,7 +818,10 @@ export const generateXml = (
       if (data.subtotalesTotales.hasOwnProperty("totalBaseGravadaIva")) {
         gTotSub.e("dTBasGraIVA", data.subtotalesTotales.totalBaseGravadaIva);
       }
-      if (data.subtotalesTotales.hasOwnProperty("totalGuaranies")) {
+      if (
+        data.subtotalesTotales.hasOwnProperty("totalGuaranies") &&
+        data.subtotalesTotales.totalGuaranies
+      ) {
         gTotSub.e("dTotalGs", data.subtotalesTotales.totalGuaranies);
       }
     }
@@ -1128,7 +1146,7 @@ export const addUrlQrToXml = (idDe, xmlName, documentType, url) => {
                   `Error al insertar URL de código QR a xml: ${err}.`
                 ),
               });
-            resolve();
+            resolve(_xml);
           });
         })
         .catch((err) =>
@@ -1391,7 +1409,7 @@ export const generateElectronicDocument = (data) => {
     let idDe;
     let tipoDe;
     let cdc;
-    let xmlSigned;
+    let xml;
     try {
       /**Registrar generación de documento electrónico */
       idDe = await insertDe(
@@ -1667,7 +1685,7 @@ export const generateElectronicDocument = (data) => {
         codigoSeguridad,
       });
       /**Inserta firma digital al xml */
-      xmlSigned = await signXml(
+      await signXml(
         idDe,
         `${cdc}.xml`,
         config.cert,
@@ -1682,7 +1700,12 @@ export const generateElectronicDocument = (data) => {
         data.timbrado.tipoDE
       );
       /**Inserta url del QR al xml firmado */
-      await addUrlQrToXml(idDe, `${cdc}.xml`, data.timbrado.tipoDE, urlQr);
+      xml = await addUrlQrToXml(
+        idDe,
+        `${cdc}.xml`,
+        data.timbrado.tipoDE,
+        urlQr
+      );
       /**Genera código QR */
       const qr = await generateQr(idDe, urlQr);
       /**Genera Kude */
@@ -1719,10 +1742,10 @@ export const generateElectronicDocument = (data) => {
         "Kude enviado de prueba",
         pathKude
       );*/
-      await updateDe(idDe, tipoDe.tipo_de, 1, cdc, formatXml(xmlSigned));
+      await updateDe(idDe, tipoDe.tipo_de, 1, cdc, formatXml(xml));
       resolve(cdc);
     } catch (err) {
-      await updateDe(idDe, tipoDe.tipo_de, 2, cdc, formatXml(xmlSigned));
+      await updateDe(idDe, tipoDe.tipo_de, 2, cdc, formatXml(xml));
       /**Registra log */
       if (err.hasOwnProperty("details")) {
         err.details.forEach(async (e) => {
