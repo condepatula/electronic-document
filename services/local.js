@@ -42,6 +42,7 @@ import {
   getTipoDocumentoAsociadoByCode,
   insertDe,
   updateDe,
+  getTipoDocumentoIdentidadByCode,
 } from "../database/index.js";
 
 /**
@@ -256,7 +257,12 @@ export const generateXml = (
     gDatRec.e("iTiOpe", data.camposGeneralesDE.receptor.tipoOperacion);
     gDatRec.e("cPaisRec", data.camposGeneralesDE.receptor.pais);
     gDatRec.e("dDesPaisRe", data.camposGeneralesDE.receptor.desPais);
-    if (data.camposGeneralesDE.receptor.hasOwnProperty("tipoContribuyente")) {
+    if (
+      data.camposGeneralesDE.receptor.hasOwnProperty("tipoContribuyente") &&
+      eval(
+        root.camposGeneralesDE.props.receptor.props.tipoContribuyente.required
+      )
+    ) {
       gDatRec.e(
         "iTiContRec",
         data.camposGeneralesDE.receptor.tipoContribuyente
@@ -1030,7 +1036,11 @@ export const generateUrlForQr = (idDe, xmlName, documentType) => {
             res.rDE.DE[0].$.Id
           }&dFeEmiDE=${convertStringToHexadecimal(
             res.rDE.DE[0].gDatGralOpe[0].dFeEmiDE[0]
-          )}&dRucRec=${
+          )}${
+            res.rDE.DE[0].gDatGralOpe[0].gDatRec[0].iNatRec[0] === "1"
+              ? "&dRucRec="
+              : "&dNumIDRec="
+          }${
             res.rDE.DE[0].gDatGralOpe[0].gDatRec[0].iNatRec[0] === "1"
               ? res.rDE.DE[0].gDatGralOpe[0].gDatRec[0].dRucRec[0]
               : res.rDE.DE[0].gDatGralOpe[0].gDatRec[0].dNumIDRec[0]
@@ -1412,11 +1422,23 @@ export const generateElectronicDocument = (data) => {
     let xml;
     try {
       /**Registrar generación de documento electrónico */
-      idDe = await insertDe(
-        `${data.camposGeneralesDE.receptor.ruc}-${data.camposGeneralesDE.receptor.digitoVerificador}`,
-        `${data.timbrado.establecimiento}-${data.timbrado.puntoExpedicion}-${data.timbrado.numeroDocumento}`,
-        data.camposGeneralesDE.receptor.nombre
-      );
+      if (data.camposGeneralesDE.receptor.ruc) {
+        idDe = await insertDe(
+          `${data.camposGeneralesDE.receptor.ruc}-${data.camposGeneralesDE.receptor.digitoVerificador}`,
+          `${data.timbrado.establecimiento}-${data.timbrado.puntoExpedicion}-${data.timbrado.numeroDocumento}`,
+          data.camposGeneralesDE.receptor.nombre
+        );
+      }
+      if (
+        data.camposGeneralesDE.receptor.tipoDocumento &&
+        data.camposGeneralesDE.receptor.numeroDocumento
+      ) {
+        idDe = await insertDe(
+          `${data.camposGeneralesDE.receptor.numeroDocumento}`,
+          `${data.timbrado.establecimiento}-${data.timbrado.puntoExpedicion}-${data.timbrado.numeroDocumento}`,
+          data.camposGeneralesDE.receptor.nombre
+        );
+      }
       /**Registra log */
       let logMessage = `Iniciando proceso de generación de documento electrónico.`;
       console.log(
@@ -1532,6 +1554,19 @@ export const generateElectronicDocument = (data) => {
       if (ciudadEmisor) {
         data.camposGeneralesDE.emisor.ciudad = ciudadEmisor.codigo;
         data.camposGeneralesDE.emisor.desCiudad = ciudadEmisor.descripcion;
+      }
+      /**Obtiene los datos del tipo de documento del receptor*/
+      if (data.camposGeneralesDE.receptor.tipoDocumento) {
+        const tipoDocumentoReceptor = await getTipoDocumentoIdentidadByCode(
+          data.camposGeneralesDE.receptor.tipoDocumento,
+          idDe
+        );
+        if (tipoDocumentoReceptor) {
+          data.camposGeneralesDE.receptor.tipoDocumento =
+            tipoDocumentoReceptor.codigo;
+          data.camposGeneralesDE.receptor.desTipoDocumento =
+            tipoDocumentoReceptor.descripcion;
+        }
       }
       /**Obtiene los datos del pais del receptor*/
       if (data.camposGeneralesDE.receptor.pais) {
@@ -1745,6 +1780,7 @@ export const generateElectronicDocument = (data) => {
       await updateDe(idDe, tipoDe.tipo_de, 1, cdc, formatXml(xml));
       resolve(cdc);
     } catch (err) {
+      //console.log(err)
       await updateDe(idDe, tipoDe.tipo_de, 2, cdc, formatXml(xml));
       /**Registra log */
       if (err.hasOwnProperty("details")) {

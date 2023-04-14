@@ -906,7 +906,7 @@ export const getTipoDocumentoIdentidadByCode = (codigo, numeroDocumentoDe) => {
     pool.query(
       `SELECT *
                     FROM tipo_documento_identidad a
-                    WHERE a.codigo=$1`,
+                    WHERE a.codigo_externo=$1`,
       [codigo],
       (err, res) => {
         if (err) {
