@@ -1253,7 +1253,7 @@ export const root = {
           },
           nombreFantasia: {
             name: "dNomFanRec",
-            minSize: 4,
+            minSize: 3,
             maxSize: 255,
             minOccurrence: 0,
             maxOccurrence: 1,
