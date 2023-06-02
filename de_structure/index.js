@@ -3430,6 +3430,23 @@ export const root = {
                 location:
                   "data['documentoElectronico']['items'][index]['iva']['liquidacionIva']",
               },
+              baseExenta: {
+                name: "dBasExe",
+                minSize: 1,
+                maxSize: 15,
+                decMinSize: 0,
+                decMaxSize: 8,
+                minOccurrence: 0,
+                maxOccurrence: 1,
+                type: "number",
+                group: "E8.2",
+                id: "E737",
+                parent: "E730",
+                description: "Base exenta por ítem",
+                observation: "",
+                location:
+                  "data['documentoElectronico']['items'][index]['iva']['baseExenta']",
+              },
             },
           },
         },

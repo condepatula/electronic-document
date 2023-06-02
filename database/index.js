@@ -2243,7 +2243,7 @@ export const getTiposDocumentosAsociados = () => {
   });
 };
 
-export const getTipoDocumentoImpresoByCode = (codigo, numeroDocumentoDe) => {
+export const getTipoDocumentoImpresoByCode = (codigo, idDe) => {
   return new Promise(async (resolve, reject) => {
     /**Registra log */
     const logMessage = `Obteniendo datos del tipo de documento impreso.`;
@@ -2253,7 +2253,7 @@ export const getTipoDocumentoImpresoByCode = (codigo, numeroDocumentoDe) => {
       )}]: ${logMessage}`
     );
     let payload = {
-      numero: numeroDocumentoDe,
+      numero: idDe,
       message: logMessage,
       tipoLog: "info",
     };
@@ -2517,22 +2517,62 @@ export const insertLog = (payload) => {
   });
 };
 
-export const insertDe = (ruc, numero, nombreReceptor) => {
+export const insertDe = (ruc, numero, nombreReceptor, email, emailCc) => {
   return new Promise(async (resolve, reject) => {
     try {
-      await insertCliente(ruc, nombreReceptor);
-      const de = await pool.query(
-        "INSERT INTO de(fecha,numero,ruc) VALUES($1,$2,$3) RETURNING *",
-        [new Date(), numero, ruc]
+      await insertCliente(ruc, nombreReceptor, email, emailCc);
+      const searchDe = await pool.query(
+        `SELECT * FROM de a WHERE a.ruc=$1 and a.numero=$2`,
+        [ruc, numero]
       );
-      resolve(de.rows[0].id);
+      if (searchDe.rowCount === 0) {
+        const de = await pool.query(
+          "INSERT INTO de(fecha,numero,ruc) VALUES($1,$2,$3) RETURNING *",
+          [new Date(), numero, ruc]
+        );
+        resolve(de.rows[0].id);
+      } else {
+        resolve(searchDe.rows[0].id);
+      }
     } catch (error) {
       reject(error);
     }
   });
 };
 
-export const insertCliente = (ruc, nombre) => {
+export const getDeByCdc = (cdc) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      pool.query(
+        `SELECT *
+                  FROM de a WHERE a.cdc=$1`,
+        [cdc],
+        (err, res) => {
+          if (err) {
+            reject({
+              origin: "getDeByCdc",
+              details: `${err}`,
+            });
+          }
+          if (res.rowCount > 0) {
+            resolve(res.rows[0]);
+          } else {
+            reject({
+              origin: "getDeByCdc",
+              details: new Array(
+                `No se han encontrado datos referentes al documento electrónico en la tabla de.`
+              ),
+            });
+          }
+        }
+      );
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
+export const insertCliente = (ruc, nombre, email, emailCc) => {
   return new Promise(async (resolve, reject) => {
     try {
       const cliente = await pool.query(
@@ -2540,10 +2580,15 @@ export const insertCliente = (ruc, nombre) => {
         [ruc]
       );
       if (cliente.rowCount === 0) {
-        await pool.query("INSERT INTO cliente(ruc,nombre) VALUES($1,$2)", [
-          ruc,
-          nombre,
-        ]);
+        await pool.query(
+          "INSERT INTO cliente(ruc,nombre,email,email_cc) VALUES($1,$2,$3,$4)",
+          [ruc, nombre, email, emailCc]
+        );
+      } else {
+        await pool.query(
+          `UPDATE cliente SET nombre=$1, email=$2, email_cc=$3 WHERE ruc=$4`,
+          [nombre, email, emailCc, ruc]
+        );
       }
       resolve();
     } catch (error) {
@@ -2552,12 +2597,20 @@ export const insertCliente = (ruc, nombre) => {
   });
 };
 
-export const updateDe = (idDe, tipoDe, estado, cdc, xml) => {
+export const updateDe = (idDe, tipoDe, estado, cdc, xml, codigoSeguridad) => {
   return new Promise(async (resolve, reject) => {
     try {
       await pool.query(
-        `UPDATE de SET tipo_de=$1, estado=$2, cdc=$3, archivo=$4, xml=$5 WHERE id=$6`,
-        [tipoDe, estado, cdc, `${cdc}.xml`, xml, idDe]
+        `UPDATE de SET tipo_de=$1, estado=$2, cdc=$3, archivo=$4, xml=$5,codigo_seguridad=$6 WHERE id=$7`,
+        [
+          tipoDe,
+          estado,
+          cdc,
+          cdc ? `${cdc}.xml` : null,
+          xml,
+          codigoSeguridad,
+          idDe,
+        ]
       );
       resolve();
     } catch (error) {
@@ -2673,4 +2726,5 @@ export default {
   recordElectronicDocumentDeliveryResponse,
   insertDe,
   updateDe,
+  getDeByCdc,
 };

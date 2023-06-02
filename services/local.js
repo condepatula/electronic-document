@@ -43,7 +43,9 @@ import {
   insertDe,
   updateDe,
   getTipoDocumentoIdentidadByCode,
+  getDeByCdc,
 } from "../database/index.js";
+import { getTipoDocumentoImpresoByCode } from "../database/index.js";
 
 /**
  * Function: generateXml
@@ -754,6 +756,9 @@ export const generateXml = (
         gCamIVA.e("dTasaIVA", a.iva.tasaIva);
         gCamIVA.e("dBasGravIVA", a.iva.baseGravadaIva);
         gCamIVA.e("dLiqIVAItem", a.iva.liquidacionIva);
+        if (a.iva.hasOwnProperty("baseExenta") /*&& a.iva.baseExenta*/) {
+          gCamIVA.e("dBasExe", a.iva.baseExenta);
+        }
       }
     });
     /**F. Campos que describen los subtotales y totales de la transacción documentada (F001-F099)*/
@@ -1363,10 +1368,10 @@ const base64_encode = function (fileName) {
   return Buffer.from(bitmap).toString("base64");
 };
 
-export const sendEmail = (idDe, from, to, subject, text, attached) => {
+export const sendEmail = (idDe, from, to, cc, subject, html, attached) => {
   return new Promise(async (resolve, reject) => {
     /**Registra log */
-    const logMessage = `Enviando Kude a ${to}.`;
+    const logMessage = `Enviando Documentos Electrónicos a ${to}.`;
     console.log(
       `[${moment(new Date()).format(
         "DD/MM/YYYY hh:mm:ss.SSSZ"
@@ -1392,23 +1397,48 @@ export const sendEmail = (idDe, from, to, subject, text, attached) => {
     let mailOptions = {
       from,
       to,
+      cc,
       subject,
-      text,
+      html,
       attachments: [
         {
-          filename: attached.split("\\")[attached.split("\\").length - 1],
-          path: attached,
-          cid: `uniq-${attached.split("\\")[attached.split("\\").length - 1]}`,
+          filename: attached[0].split("\\")[attached[0].split("\\").length - 1],
+          path: attached[0],
+          cid: `uniq-${
+            attached[0].split("\\")[attached[0].split("\\").length - 1]
+          }`,
+        },
+        {
+          filename: attached[1].split("\\")[attached[1].split("\\").length - 1],
+          path: attached[1],
+          cid: `uniq-${
+            attached[1].split("\\")[attached[1].split("\\").length - 1]
+          }`,
         },
       ],
     };
-    transport.sendMail(mailOptions, (err, info) => {
-      if (err)
+    transport.sendMail(mailOptions, async (err, info) => {
+      if (err) {
+        payload = {
+          idDe: idDe,
+          message: err,
+          tipoLog: "error",
+        };
+        await insertLog(payload);
         reject({
           origin: "sendEmail",
           details: new Array(`Error al enviar email: ${err}.`),
         });
-      if (info) resolve();
+      }
+      if (info) {
+        payload = {
+          idDe: idDe,
+          message: info,
+          tipoLog: "info",
+        };
+        await insertLog(payload);
+        resolve();
+      }
     });
   });
 };
@@ -1420,13 +1450,17 @@ export const generateElectronicDocument = (data) => {
     let tipoDe;
     let cdc;
     let xml;
+    let fecha;
+    let codigoSeguridad;
     try {
       /**Registrar generación de documento electrónico */
       if (data.camposGeneralesDE.receptor.ruc) {
         idDe = await insertDe(
           `${data.camposGeneralesDE.receptor.ruc}-${data.camposGeneralesDE.receptor.digitoVerificador}`,
           `${data.timbrado.establecimiento}-${data.timbrado.puntoExpedicion}-${data.timbrado.numeroDocumento}`,
-          data.camposGeneralesDE.receptor.nombre
+          data.camposGeneralesDE.receptor.nombre,
+          data.camposGeneralesDE.receptor.email,
+          data.camposGeneralesDE.receptor.emailCc
         );
       }
       if (
@@ -1460,23 +1494,35 @@ export const generateElectronicDocument = (data) => {
         data.timbrado.desTipoDE = tipoDe.descripcion;
       }
       /**Calcula los valores para los atributos */
-      const fecha = moment(new Date()).format("YYYY-MM-DDThh:mm:ss");
-      const codigoSeguridad = generateSecurityCode();
-      cdc = generateCdc({
-        tipoDe:
-          data.timbrado.tipoDE.toString().length === 1
-            ? "0" + data.timbrado.tipoDE
-            : data.timbrado.tipoDE,
-        rucEmisor: data.camposGeneralesDE.emisor.ruc,
-        dvEmisor: data.camposGeneralesDE.emisor.digitoVerificador,
-        establecimiento: data.timbrado.establecimiento,
-        puntoExpedicion: data.timbrado.puntoExpedicion,
-        numeroDe: data.timbrado.numeroDocumento,
-        tipoContribuyente: data.camposGeneralesDE.emisor.tipoContribuyente,
-        fechaEmision: moment(fecha).format("YYYYMMDD"),
-        tipoEmision: data.operacionDE.tipoEmision,
-        codigoSeguridad,
-      });
+      //fecha = moment(new Date()).format("YYYY-MM-DDThh:mm:ss");
+      fecha = moment(
+        data.documentoElectronico.fechaEmision,
+        "DD/MM/YYYY hh:mm:ss"
+      ).format("YYYY-MM-DDThh:mm:ss");
+      if (!data.documentoElectronico.cdc) {
+        codigoSeguridad = generateSecurityCode();
+        cdc = generateCdc({
+          tipoDe:
+            data.timbrado.tipoDE.toString().length === 1
+              ? "0" + data.timbrado.tipoDE
+              : data.timbrado.tipoDE,
+          rucEmisor: data.camposGeneralesDE.emisor.ruc,
+          dvEmisor: data.camposGeneralesDE.emisor.digitoVerificador,
+          establecimiento: data.timbrado.establecimiento,
+          puntoExpedicion: data.timbrado.puntoExpedicion,
+          numeroDe: data.timbrado.numeroDocumento,
+          tipoContribuyente: data.camposGeneralesDE.emisor.tipoContribuyente,
+          fechaEmision: moment(fecha).format("YYYYMMDD"),
+          tipoEmision: data.operacionDE.tipoEmision,
+          codigoSeguridad,
+        });
+      } else {
+        cdc = data.documentoElectronico.cdc;
+        let _de = await getDeByCdc(cdc);
+        if (_de) {
+          codigoSeguridad = _de.codigo_seguridad;
+        }
+      }
       /**Asigna los valores a los atributos del parámetro */
       data.id = cdc;
       data.digitoVerificadorDE = cdc.substring(43);
@@ -1630,7 +1676,7 @@ export const generateElectronicDocument = (data) => {
       if (
         data.documentoElectronico.notaCreditoDebitoElectronica !== undefined
       ) {
-        /**Obtiene los datos del tipo de indicador de presencia*/
+        /**Obtiene los datos del motivo de emisión de la nota de crédito*/
         const motivoEmision = await getMotivoEmisionNotaCreditoByCode(
           data.documentoElectronico.notaCreditoDebitoElectronica.motivoEmision,
           idDe
@@ -1709,6 +1755,19 @@ export const generateElectronicDocument = (data) => {
             item.desTipo = tipoDocumentoAsociado.descripcion;
           }
         }
+        /**Obtiene tipo de documento impreso del documento asociado */
+        for (const item of data.DeAsociado) {
+          if (item.tipoDocumentoImpreso !== undefined) {
+            const tipoDocumentoImpreso = await getTipoDocumentoImpresoByCode(
+              item.tipoDocumentoImpreso,
+              idDe
+            );
+            if (tipoDocumentoImpreso) {
+              item.tipoDocumentoImpreso = tipoDocumentoImpreso.codigo;
+              item.desTipoDocumentoImpreso = tipoDocumentoImpreso.descripcion;
+            }
+          }
+        }
       }
       /**Valida los datos */
       await validateData(idDe, data);
@@ -1761,27 +1820,63 @@ export const generateElectronicDocument = (data) => {
       /**---------------------- */
       /**Envia Kude por email */
       let pathKude = "";
+      let pathXmlSigned = "";
       /**Factura electrónica */
       if (data.timbrado.tipoDE === 1) {
         pathKude = path.join(config.paths.kude.invoices, `${cdc}.pdf`);
+        pathXmlSigned = path.join(
+          config.paths.xmlSigned.invoices,
+          `${cdc}.xml`
+        );
+        await sendEmail(
+          idDe,
+          config.emailFrom,
+          data.camposGeneralesDE.receptor.email,
+          data.camposGeneralesDE.receptor.emailCc,
+          `Factura Shopping Centers Paraguay S.A. ${data.timbrado.establecimiento}-${data.timbrado.puntoExpedicion}-${data.timbrado.numeroDocumento}`,
+          `<p>Estimado/a <strong>${data.camposGeneralesDE.receptor.nombreFantasia}</strong></p>
+          <p>En el presente mail puede disponer de sus documentos electrónicos por los servicios con Shopping Centers Paraguay S.A.</p>
+          <br>
+          <p>Si desea consultar sobre los conceptos detallados en alguno de sus documentos, puede responder a este email.</p>
+          <p>Saludos cordiales</p>
+          <p>SHOPPING CENTERS PARAGUAY S.A.</p>`,
+          [pathKude, pathXmlSigned]
+        );
       }
       /**Nota de crédito electrónica */
       if (data.timbrado.tipoDE === 5) {
         pathKude = path.join(config.paths.kude.creditNotes, `${cdc}.pdf`);
+        pathXmlSigned = path.join(
+          config.paths.xmlSigned.creditNotes,
+          `${cdc}.xml`
+        );
+        await sendEmail(
+          idDe,
+          config.emailFrom,
+          data.camposGeneralesDE.receptor.email,
+          data.camposGeneralesDE.receptor.emailCc,
+          `Nota de Crédito Shopping Centers Paraguay S.A. ${data.timbrado.establecimiento}-${data.timbrado.puntoExpedicion}-${data.timbrado.numeroDocumento}`,
+          `<p>Estimado/a <strong>${data.camposGeneralesDE.receptor.nombreFantasia}</strong></p>
+          <p>En el presente mail puede disponer de sus documentos electrónicos por los servicios con Shopping Centers Paraguay S.A.</p>
+          <br>
+          <p>Si desea consultar sobre los conceptos detallados en alguno de sus documentos, puede responder a este email.</p>
+          <p>Saludos cordiales</p>
+          <p>SHOPPING CENTERS PARAGUAY S.A.</p>`,
+          [pathKude, pathXmlSigned]
+        );
       }
-      /*await sendEmail(
+      await updateDe(
         idDe,
-        config.emailFrom,
-        data.camposGeneralesDE.receptor.email,
-        "Kude de prueba",
-        "Kude enviado de prueba",
-        pathKude
-      );*/
-      await updateDe(idDe, tipoDe.tipo_de, 1, cdc, formatXml(xml));
+        tipoDe.tipo_de,
+        1,
+        cdc,
+        formatXml(xml),
+        codigoSeguridad
+      );
       resolve(cdc);
     } catch (err) {
       //console.log(err)
-      await updateDe(idDe, tipoDe.tipo_de, 2, cdc, formatXml(xml));
+      await updateDe(idDe, tipoDe.tipo_de, 2, null, null, null);
       /**Registra log */
       if (err.hasOwnProperty("details")) {
         err.details.forEach(async (e) => {
